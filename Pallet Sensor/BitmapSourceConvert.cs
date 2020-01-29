@@ -12,7 +12,7 @@ public static class BitmapSourceConvert
     [DllImport("gdi32")]
     private static extern int DeleteObject(IntPtr o);
 
-    public static BitmapSource ToBitmapSource(Emgu.CV.Image<Hsv, Byte> image)
+    public static BitmapSource ToBitmapSource(Emgu.CV.Image<Gray, byte> image)
     {
         using (System.Drawing.Bitmap source = image.Bitmap)
         {
@@ -28,4 +28,5 @@ public static class BitmapSourceConvert
             return bs;
         }
     }
+  
 }

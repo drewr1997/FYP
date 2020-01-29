@@ -19,6 +19,7 @@ namespace Pallet_Sensor
         private WriteableBitmap colorBmap;              //Declares place to store color bitmap
         private DepthImagePixel[] depthPixels;          //Declares place to store depth data
         private byte[] colorPixels;                     //Declares place to store color data
+        private int i = 1;
 
         public MainWindow()
         {
@@ -102,53 +103,24 @@ namespace Pallet_Sensor
 
         //Gets color frame from kinect
         private void Ksensor_ColorFrameReady(object sender, ColorImageFrameReadyEventArgs e)
-        {
+        {            
             ColorImageFrame colorFrame = e.OpenColorImageFrame();
             BitmapSource bmap = ImageToBitmap(colorFrame);
             Colorstream.Source = bmap;
-            Processedstream.Source = Imageprocessing(bmap);
-        }
+            BitmapSource red, blue;
 
-        //Image Processing
-        BitmapSource Imageprocessing(BitmapSource Image)
-        {
-            //Checks to see if there is an image
-            if (Image != null)
+            //Each function executed every other time
+            if (i == 1)
             {
-                //Converts to image<>
-                MemoryStream Stream = new MemoryStream();
-                BitmapEncoder encoded = new BmpBitmapEncoder();
-                encoded.Frames.Add(BitmapFrame.Create(Image));
-                encoded.Save(Stream);
-                System.Drawing.Bitmap myBmp = new System.Drawing.Bitmap(Stream);            //Casts image to bitmap
-                Image<Hsv, Byte> processed = new Image<Hsv, Byte>(myBmp);                   //Casts bitmap to image<Hsv, byte>
-
-                //Main processing
-                CvInvoke.Flip(processed, processed, Emgu.CV.CvEnum.FlipType.Horizontal);    //Flips the image in the horizontal
-                Image<Gray,Byte> Thr1, Thr2;                                                //Creates two Grayscale images that will be used when segmenting
-                Thr1 = processed.InRange(new Hsv(0, 120, 70), new Hsv(10, 255, 255));       //Handles first range for RED
-                Thr2 = processed.InRange(new Hsv(170, 120, 70), new Hsv(180, 255, 255));    //Handles second range for RED
-                Thr1 = Thr1 + Thr2;
-
-                //Handles noise and cleans image
-                Mat kernel = Mat.Ones(3, 3, Emgu.CV.CvEnum.DepthType.Cv32F, 1);             //Creates 3x3 kernel for use as kernel
-                CvInvoke.MorphologyEx(Thr1, Thr1, Emgu.CV.CvEnum.MorphOp.Open, kernel, new System.Drawing.Point(0,0),1,Emgu.CV.CvEnum.BorderType.Default,new MCvScalar(1));
-                CvInvoke.MorphologyEx(Thr1, Thr1, Emgu.CV.CvEnum.MorphOp.Dilate, kernel, new System.Drawing.Point(0, 0), 1, Emgu.CV.CvEnum.BorderType.Default, new MCvScalar(1));
-
-                //Extracts only RED parts from orignal image
-                Mat Mask;                                                                  //Creates Mat for converting mask to Mat
-                Mask = Thr1.Mat;                                                           //Casts mask to Mat
-                Image<Hsv, byte> Final = new Image<Hsv, byte>(processed.Width,processed.Height);    //Creates Image<Hsv,byte> for final processed image
-                CvInvoke.BitwiseAnd(processed, processed, Final,Mask);                     //ANDS mask with orignal image to retain only portions that are RED
-
-                //Cleanup
-                Mask.Dispose();
-                Thr1.Dispose();
-                Thr2.Dispose();
-
-                return BitmapSourceConvert.ToBitmapSource(Final);                          //Returns processed image
+                red = Imageprocessing.Procred(bmap);
+                Processedstream.Source = red;
+                i = 0;
             }
-            else {return null;}
+            else {
+                blue = Imageprocessing.Procblue(bmap);
+                Outputstream.Source = blue;
+                i = 1;
+            }           
         }
 
         //Converts image to bitmap
