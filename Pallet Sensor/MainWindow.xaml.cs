@@ -171,23 +171,28 @@ namespace Pallet_Sensor
                     pixelData,
                     depthFrame.Width * depthFrame.BytesPerPixel);
 
-                int RC = (ushort)pixelData[640-XR + YR * depthFrame.Width];
-                RC = RC >> 3;
-              
+                double Rxcoord, Rycoord, Bxcoord, Bycoord; //stores coordinate info
+                double vertF = 609.275495, horzF = 589.3666835; //Focal lengths
 
-                //Debug.WriteLine("Centre depth - {0}", RC);
-                int BC = (ushort)pixelData[640-XB + YB * depthFrame.Width];
-                BC = BC >> 3;
-                BlueCenter.Content = BC;
+                //Red coordinates
+                int Rzcoord = (ushort)pixelData[640-XR + YR * depthFrame.Width]; 
+                Rzcoord = Rzcoord >> 3;
+                Rxcoord = (Rzcoord * (320 - XR)) / horzF;
+                Rycoord = (Rzcoord * (240 - YR)) / vertF;
 
-                double xcoord, ycoord;
+                RCoordX.Content = Math.Round(Rxcoord);
+                RCoordY.Content = Math.Round(Rycoord);
+                RCoordZ.Content = Rzcoord;
 
-                xcoord = (RC*(320-XR))/589.37;
-                ycoord = (RC * (240 - YR)) / 609.28;
+                //Blue coordinates
+                int Bzcoord = (ushort)pixelData[640-XB + YB * depthFrame.Width];
+                Bzcoord = Bzcoord >> 3;
+                Bxcoord = (Bzcoord * (320 - XR)) / horzF;
+                Bycoord = (Bzcoord * (240 - YR)) / vertF;
 
-                CoordX.Content = Math.Round(xcoord);
-                CoordY.Content = Math.Round(ycoord);
-                CoordZ.Content = RC;
+                BCoordX.Content = Math.Round(Rxcoord);
+                BCoordY.Content = Math.Round(Rycoord);
+                BCoordZ.Content = Rzcoord;
 
                 //Set stream to image
                 Depthstream.Source = bmap;
