@@ -6,15 +6,19 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using Microsoft.Kinect;
 
 public class Imageprocessing
 { 
+    public static int XRed, YRed, XBlue, YBlue;
+
     //Red Segmentation
     public static BitmapSource Procred(BitmapSource Image)
     {
         //Checks to see if there is an image
         if (Image != null)
         {
+
             //Converts to image<>
             MemoryStream Stream = new MemoryStream();
             BitmapEncoder encoded = new BmpBitmapEncoder();
@@ -69,14 +73,20 @@ public class Imageprocessing
             Moments moments = CvInvoke.Moments(Contourdrawn, true);                     //Gets the moments of the dranw contour
             Center = moments.GravityCenter;                                             //converts the moment to a center
 
-            try
+            if (moments.M00 != 0)
             {
-                X = Convert.ToInt32(Center.X);                                          //Converts to integer
-                Y = Convert.ToInt32(Center.Y);
-                Debug.WriteLine("X - {0}, Y - {1}",X,Y);                                //Prints centre co-ords to console
+                Center = moments.GravityCenter;                                             //converts the moment to a center
+                X = Convert.ToInt32(Center.X);                                              //Converts X to integer
+                XRed = X;
+                Y = Convert.ToInt32(Center.Y);                                              //Converts Y to integer
+                YRed = Y;
+                Debug.WriteLine("X - {0}, Y - {1}", X, Y);                                //Prints centre co-ords to console
                 CvInvoke.Circle(Centroid, new System.Drawing.Point(X, Y), 10, new MCvScalar(255, 255, 255), -1);
             }
-            catch { Debug.WriteLine("No RED in detected");}
+            else
+            {
+                Debug.WriteLine("No RED detected");
+            }
 
             //Cleanup
             Mask.Dispose();
@@ -123,11 +133,13 @@ public class Imageprocessing
             //Extracts biggest blob
             //Variables
             double Largestarea = 0;
+            double depth;
             int Largestcontourindex = 0, X, Y;
-            MCvPoint2D64f Center;
+            MCvPoint2D64f Center = new MCvPoint2D64f(0,0);
             Image<Gray, Byte> Centroid = new Image<Gray, Byte>(processed.Width, processed.Height);
             Image<Gray, Byte> Contourdrawn = new Image<Gray, Byte>(processed.Width, processed.Height);
             VectorOfVectorOfPoint Contours = new VectorOfVectorOfPoint();
+            Moments moments = new Moments();
             Mat Hierarchy = new Mat();
 
              
@@ -146,18 +158,24 @@ public class Imageprocessing
                 }
             }
 
-            try { 
             CvInvoke.DrawContours(Contourdrawn, Contours, Largestcontourindex, new MCvScalar(255, 255, 255), 10, Emgu.CV.CvEnum.LineType.Filled, Hierarchy, 0); //Draws biggest contour on blank image
-            Moments moments = CvInvoke.Moments(Contourdrawn, true);                     //Gets the moments of the dranw contour
-            Center = moments.GravityCenter;                                             //converts the moment to a center
+            //return BitmapSourceConvert.ToBitmapSource(Contourdrawn);
+            moments = CvInvoke.Moments(Contourdrawn, true);                     //Gets the moments of the drawn contour
 
-           
-                X = Convert.ToInt32(Center.X);                                          //Converts to integer
+            if (moments.M00 != 0)
+            {
+                Center = moments.GravityCenter;                                             //converts the moment to a center
+                X = Convert.ToInt32(Center.X);                                              //Converts to integer
+                XBlue = X;
                 Y = Convert.ToInt32(Center.Y);
-                Debug.WriteLine("X - {0}, Y - {1}", X, Y);                                //Prints centre co-ords to console
+                YBlue = Y;
+                //Debug.WriteLine("X - {0}, Y - {1}", X, Y);                                //Prints centre co-ords to console
                 CvInvoke.Circle(Centroid, new System.Drawing.Point(X, Y), 10, new MCvScalar(255, 255, 255), -1);
             }
-            catch { Debug.WriteLine("No BLUE in detected"); }
+            else
+            {
+                Debug.WriteLine("No BLUE detected");
+            }
 
             //Cleanup
             Mask.Dispose();

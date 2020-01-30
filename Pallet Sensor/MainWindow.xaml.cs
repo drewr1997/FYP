@@ -6,6 +6,7 @@ using System.Windows.Media.Imaging;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using System;
+using System.Diagnostics;
 
 // Author: Andrew Ross
 // Student ID: 16511676
@@ -19,6 +20,7 @@ namespace Pallet_Sensor
         private WriteableBitmap colorBmap;              //Declares place to store color bitmap
         private DepthImagePixel[] depthPixels;          //Declares place to store depth data
         private byte[] colorPixels;                     //Declares place to store color data
+        private static int XB, YB, XR, YR;
         private int i = 1;
 
         public MainWindow()
@@ -113,6 +115,10 @@ namespace Pallet_Sensor
             if (i == 1)
             {
                 red = Imageprocessing.Procred(bmap);
+                XB = Imageprocessing.XBlue;
+                YB = Imageprocessing.YBlue;
+                XR = Imageprocessing.XRed;
+                YR = Imageprocessing.YRed;
                 Processedstream.Source = red;
                 i = 0;
             }
@@ -156,6 +162,7 @@ namespace Pallet_Sensor
                 //Convert depth data to bitmapsource
                 short[] pixelData = new short[depthFrame.PixelDataLength];
                 depthFrame.CopyPixelDataTo(pixelData);
+                
                 BitmapSource bmap = BitmapSource.Create(
                     depthFrame.Width,
                     depthFrame.Height,
@@ -163,6 +170,24 @@ namespace Pallet_Sensor
                     PixelFormats.Gray16, null,
                     pixelData,
                     depthFrame.Width * depthFrame.BytesPerPixel);
+
+                int RC = (ushort)pixelData[640-XR + YR * depthFrame.Width];
+                RC = RC >> 3;
+              
+
+                //Debug.WriteLine("Centre depth - {0}", RC);
+                int BC = (ushort)pixelData[640-XB + YB * depthFrame.Width];
+                BC = BC >> 3;
+                BlueCenter.Content = BC;
+
+                double xcoord, ycoord;
+
+                xcoord = (RC*(320-XR))/589.37;
+                ycoord = (RC * (240 - YR)) / 609.28;
+
+                CoordX.Content = Math.Round(xcoord);
+                CoordY.Content = Math.Round(ycoord);
+                CoordZ.Content = RC;
 
                 //Set stream to image
                 Depthstream.Source = bmap;
