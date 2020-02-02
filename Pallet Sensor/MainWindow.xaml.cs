@@ -122,11 +122,12 @@ namespace Pallet_Sensor
                 Processedstream.Source = red;
                 i = 0;
             }
-            else {
-                blue = Imageprocessing.Procblue(bmap);
-                Outputstream.Source = blue;
+            else
+            {
+                //blue = Imageprocessing.Procblue(bmap);
+                //Outputstream.Source = blue;
                 i = 1;
-            }           
+            }
         }
 
         //Converts image to bitmap
