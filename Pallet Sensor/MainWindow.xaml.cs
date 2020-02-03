@@ -21,7 +21,7 @@ namespace Pallet_Sensor
         private DepthImagePixel[] depthPixels;          //Declares place to store depth data
         private byte[] colorPixels;                     //Declares place to store color data
         private static int XB, YB, XR, YR;
-        private int i = 1;
+        private int i = 1,k=0;
 
         public MainWindow()
         {
@@ -149,7 +149,7 @@ namespace Pallet_Sensor
         private void Ksensor_DepthFrameReady(object sender, DepthImageFrameReadyEventArgs e)
         {
             DepthImageFrame depthFrame = e.OpenDepthImageFrame();   //Puts Depthframe into Depthframe
-
+            
             //Checks if there is a depthFrame
             if (depthFrame != null)
             {
@@ -175,25 +175,45 @@ namespace Pallet_Sensor
                 double Rxcoord, Rycoord, Bxcoord, Bycoord; //stores coordinate info
                 double vertF = 609.275495, horzF = 589.3666835; //Focal lengths
 
-                //Red coordinates
-                int Rzcoord = (ushort)pixelData[640-XR + YR * depthFrame.Width]; 
-                Rzcoord = Rzcoord >> 3;
-                Rxcoord = (Rzcoord * (320 - XR)) / horzF;
-                Rycoord = (Rzcoord * (240 - YR)) / vertF;
+                ColorImagePoint[] color = new ColorImagePoint[depthFrame.PixelDataLength];
+                ksensor.CoordinateMapper.MapDepthFrameToColorFrame(DepthImageFormat.Resolution640x480Fps30, this.depthPixels, ColorImageFormat.RgbResolution640x480Fps30, color);
+                 for (k = 0; k < 640; ++k)
+                {
+                    if (color[k].X == XR)
+                    {
+                        break;
+                    }
+                }
+                 for (int h = k; h < depthFrame.PixelDataLength; h += 640)
+                {
+                    if (color[h].Y == YR)
+                    {
+                        XR = h % 640;
+                        YR = (h - XR) / 640;
 
-                RCoordX.Content = Math.Round(Rxcoord);
-                RCoordY.Content = Math.Round(Rycoord);
-                RCoordZ.Content = Rzcoord;
+                        //Red coordinates
+                        int Rzcoord = this.depthPixels[640 - XR + YR * depthFrame.Width].Depth;
 
-                //Blue coordinates
-                int Bzcoord = (ushort)pixelData[640-XB + YB * depthFrame.Width];
-                Bzcoord = Bzcoord >> 3;
-                Bxcoord = (Bzcoord * (320 - XR)) / horzF;
-                Bycoord = (Bzcoord * (240 - YR)) / vertF;
+                        Rxcoord = (Rzcoord * (320 - XR)) / horzF;
+                        Rycoord = (Rzcoord * (240 - YR)) / vertF;
 
-                BCoordX.Content = Math.Round(Rxcoord);
-                BCoordY.Content = Math.Round(Rycoord);
-                BCoordZ.Content = Rzcoord;
+                        RCoordX.Content = Math.Round(Rxcoord);
+                        RCoordY.Content = Math.Round(Rycoord);
+                        RCoordZ.Content = Rzcoord;
+
+                        break;
+                    }
+                }
+          
+                ////Blue coordinates
+                //int Bzcoord = (ushort)pixelData[640-XB + YB * depthFrame.Width];
+                //Bzcoord = Bzcoord >> 3;
+                //Bxcoord = (Bzcoord * (320 - XR)) / horzF;
+                //Bycoord = (Bzcoord * (240 - YR)) / vertF;
+
+                //BCoordX.Content = Math.Round(Rxcoord);
+                //BCoordY.Content = Math.Round(Rycoord);
+                //BCoordZ.Content = Rzcoord;
 
                 //Set stream to image
                 Depthstream.Source = bmap;
