@@ -7,6 +7,7 @@ using Emgu.CV;
 using Emgu.CV.Structure;
 using System;
 using System.Diagnostics;
+using System.Windows.Controls;
 
 // Author: Andrew Ross
 // Student ID: 16511676
@@ -16,12 +17,24 @@ namespace Pallet_Sensor
     public partial class MainWindow : Window
     {
         // Declaring Variables
-        private KinectSensor ksensor;                   //Declares kinect
+        public KinectSensor ksensor;                   //Declares kinect
         private WriteableBitmap colorBmap;              //Declares place to store color bitmap
         private DepthImagePixel[] depthPixels;          //Declares place to store depth data
         private byte[] colorPixels;                     //Declares place to store color data
-        private static int XB, YB, XR, YR;
-        private int i = 1,k=0;
+        private static int XB, YB, XR=0, YR=0, XRMapped, YRMapped, XBMapped, YBMapped;
+        private int i = 1, j=0, k=0;
+
+        private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Up)
+            {
+                Tilt.TiltUp(ksensor);
+            }
+            if (e.Key == System.Windows.Input.Key.Down)
+            {
+                Tilt.TiltDown(ksensor);
+            }
+        }
 
         public MainWindow()
         {
@@ -109,23 +122,22 @@ namespace Pallet_Sensor
             ColorImageFrame colorFrame = e.OpenColorImageFrame();
             BitmapSource bmap = ImageToBitmap(colorFrame);
             Colorstream.Source = bmap;
-            BitmapSource red, blue;
 
             //Each function executed every other time
             if (i == 1)
             {
-                red = Imageprocessing.Procred(bmap);
+                Imageprocessing.Proc(bmap, Canvas3, Outputstream);
                 XB = Imageprocessing.XBlue;
                 YB = Imageprocessing.YBlue;
                 XR = Imageprocessing.XRed;
                 YR = Imageprocessing.YRed;
-                Processedstream.Source = red;
+                //Sets output screen
+                Imageprocessing.OutputScreen(bmap, Outputstream);
                 i = 0;
             }
             else
             {
-                //blue = Imageprocessing.Procblue(bmap);
-                //Outputstream.Source = blue;
+
                 i = 1;
             }
         }
@@ -177,46 +189,92 @@ namespace Pallet_Sensor
 
                 ColorImagePoint[] color = new ColorImagePoint[depthFrame.PixelDataLength];
                 ksensor.CoordinateMapper.MapDepthFrameToColorFrame(DepthImageFormat.Resolution640x480Fps30, this.depthPixels, ColorImageFormat.RgbResolution640x480Fps30, color);
-                 for (k = 0; k < 640; ++k)
+
+                //Seraches mapped RED coordinates
+                for (k = 0; k < 640; ++k)
                 {
                     if (color[k].X == XR)
                     {
                         break;
                     }
                 }
-                 for (int h = k; h < depthFrame.PixelDataLength; h += 640)
+                for (int h = k; h < depthFrame.PixelDataLength; h += 640)
                 {
                     if (color[h].Y == YR)
                     {
-                        XR = h % 640;
-                        YR = (h - XR) / 640;
+                        XRMapped = h % 640;
+                        YRMapped = (h - XR) / 640;
 
                         //Red coordinates
-                        int Rzcoord = this.depthPixels[640 - XR + YR * depthFrame.Width].Depth;
+                        int Rzcoord = this.depthPixels[(640 - XRMapped) + (YRMapped * 640)].Depth;
 
-                        Rxcoord = (Rzcoord * (320 - XR)) / horzF;
-                        Rycoord = (Rzcoord * (240 - YR)) / vertF;
+                        Rxcoord = (Rzcoord * (320 - XRMapped)) / horzF;
+                        Rycoord = (Rzcoord * (240 - YRMapped)) / vertF;
 
                         RCoordX.Content = Math.Round(Rxcoord);
                         RCoordY.Content = Math.Round(Rycoord);
                         RCoordZ.Content = Rzcoord;
-
                         break;
                     }
                 }
-          
-                ////Blue coordinates
-                //int Bzcoord = (ushort)pixelData[640-XB + YB * depthFrame.Width];
-                //Bzcoord = Bzcoord >> 3;
-                //Bxcoord = (Bzcoord * (320 - XR)) / horzF;
-                //Bycoord = (Bzcoord * (240 - YR)) / vertF;
 
-                //BCoordX.Content = Math.Round(Rxcoord);
-                //BCoordY.Content = Math.Round(Rycoord);
-                //BCoordZ.Content = Rzcoord;
+                //Searches mapped Blue coordinates
+                for (j = 0; j < 640; ++j)
+                {
+                    if (color[j].X == XB)
+                    {
+                        break;
+                    }
+                }
+                for (int h = j; h < depthFrame.PixelDataLength; h += 640)
+                {
+                    if (color[h].Y == YB)
+                    {
+                        XBMapped = h % 640;
+                        YBMapped = (h - XB) / 640;
+
+                        //Red coordinates
+                        int Bzcoord = this.depthPixels[(640 - XBMapped) + (YBMapped * 640)].Depth;
+
+                        Bxcoord = (Bzcoord * (320 - XBMapped)) / horzF;
+                        Bycoord = (Bzcoord * (240 - YBMapped)) / vertF;
+
+                        BCoordX.Content = Math.Round(Bxcoord);
+                        BCoordY.Content = Math.Round(Bycoord);
+                        BCoordZ.Content = Bzcoord;
+                        break;
+                    }
+                }
 
                 //Set stream to image
                 Depthstream.Source = bmap;
+
+                //Add points to imageviews for debugging
+                Canvas1.Children.Clear();
+                Canvas2.Children.Clear();
+
+                System.Windows.Shapes.Ellipse DepthPointRed = CreateEllipse.CircleRed();
+                System.Windows.Shapes.Ellipse DepthPointYellow = CreateEllipse.CircleYellow();
+                System.Windows.Shapes.Ellipse ColorPointRed = CreateEllipse.CircleRed();
+                System.Windows.Shapes.Ellipse ColorPointYellow = CreateEllipse.CircleYellow();
+
+                Canvas2.Children.Add(ColorPointRed);
+                Canvas2.Children.Add(ColorPointYellow);
+
+                Canvas1.Children.Add(DepthPointRed);
+                Canvas1.Children.Add(DepthPointYellow);
+
+                DepthPointRed.SetValue(Canvas.LeftProperty, (depthFrame.Width - XRMapped -3)*.6);
+                DepthPointRed.SetValue(Canvas.TopProperty, (YRMapped-3) *.6);
+
+                DepthPointYellow.SetValue(Canvas.LeftProperty, (depthFrame.Width - XBMapped-3) * .6);
+                DepthPointYellow.SetValue(Canvas.TopProperty, (YBMapped-3) * .6);
+
+                ColorPointRed.SetValue(Canvas.LeftProperty, (depthFrame.Width - XR-3) * .6);
+                ColorPointRed.SetValue(Canvas.TopProperty, (YR-3) * .6);
+
+                ColorPointYellow.SetValue(Canvas.LeftProperty, (depthFrame.Width - XB-3) * .6);
+                ColorPointYellow.SetValue(Canvas.TopProperty, (YB-3) * .6);
 
                 //Cleanup
                 depthFrame.Dispose();

@@ -70,7 +70,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="BLUE.cs" />
+    <Compile Include="CreateEllipse.cs" />
     <Compile Include="Imageprocessing.cs" />
+    <Compile Include="Tilt.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
