@@ -13,7 +13,8 @@ using System.Drawing;
 public class Imageprocessing
 { 
     public static int XRed, YRed, XBlue, YBlue;
-    private static Rectangle boundingrectyellow, boundingrectred;
+    private static Rectangle boundingrectBlue, boundingrectred;
+    private static Image<Hsv, Byte> processedred;                   //Casts bitmap to image<Hsv, byte>
 
     //Red Segmentation
     public static void Proc(BitmapSource Image, Canvas Canvas3, System.Windows.Controls.Image outputimage)
@@ -27,7 +28,7 @@ public class Imageprocessing
             encodedred.Frames.Add(BitmapFrame.Create(Image));
             encodedred.Save(Streamred);
             System.Drawing.Bitmap myBmpred = new System.Drawing.Bitmap(Streamred);            //Casts image to bitmap
-            Image<Hsv, Byte> processedred = new Image<Hsv, Byte>(myBmpred);                   //Casts bitmap to image<Hsv, byte>
+            processedred = new Image<Hsv, Byte>(myBmpred);                   //Casts bitmap to image<Hsv, byte>
 
             //Main processing
             CvInvoke.Flip(processedred, processedred, Emgu.CV.CvEnum.FlipType.Horizontal);    //Flips the image in the horizontal
@@ -88,7 +89,7 @@ public class Imageprocessing
 
             //Blue
             Image<Gray, Byte> ThrBlue;                                                     //Creates two Grayscale images that will be used when segmenting
-            ThrBlue = processedred.InRange(new Hsv(20,200,120), new Hsv(27, 255, 200));    //Handles second range for RED
+            ThrBlue = processedred.InRange(new Hsv(100,110,70), new Hsv(120, 255, 150));    //Handles second range for RED
 
             //Handles noise and cleans image
             CvInvoke.MorphologyEx(ThrBlue, ThrBlue, Emgu.CV.CvEnum.MorphOp.Open, kernel, new System.Drawing.Point(0, 0), 1, Emgu.CV.CvEnum.BorderType.Default, new MCvScalar(1));
@@ -122,13 +123,13 @@ public class Imageprocessing
                 {
                     LargestAreaBlue = a;
                     LargestContourIndexBlue = i;                                            //Stores the index of largest contour
-                    boundingrectyellow = CvInvoke.BoundingRectangle(ContoursBlue[LargestContourIndexBlue]);    // Creates bounding rectangle for biggest contour
+                    boundingrectBlue = CvInvoke.BoundingRectangle(ContoursBlue[LargestContourIndexBlue]);    // Creates bounding rectangle for biggest contour
                 }
             }
 
             //Compute center of rectangle
-            XBlue = boundingrectyellow.X + boundingrectyellow.Width / 2;
-            YBlue = boundingrectyellow.Y + boundingrectyellow.Height / 2;
+            XBlue = boundingrectBlue.X + boundingrectBlue.Width / 2;
+            YBlue = boundingrectBlue.Y + boundingrectBlue.Height / 2;
 
             //Cleanup
             Mask1.Dispose();
@@ -138,16 +139,16 @@ public class Imageprocessing
             Canvas3.Children.Clear();
 
             System.Windows.Shapes.Ellipse PointRed = CreateEllipse.CircleRed();
-            System.Windows.Shapes.Ellipse PointYellow = CreateEllipse.CircleYellow();
+            System.Windows.Shapes.Ellipse PointBlue = CreateEllipse.CircleBlue();
 
             Canvas3.Children.Add(PointRed);
-            Canvas3.Children.Add(PointYellow);
+            Canvas3.Children.Add(PointBlue);
 
             PointRed.SetValue(Canvas.LeftProperty, (640 - XRed) * .6);
             PointRed.SetValue(Canvas.TopProperty, YRed * .6);
 
-            PointYellow.SetValue(Canvas.LeftProperty, (640 - XBlue) * .6);
-            PointYellow.SetValue(Canvas.TopProperty, YBlue * .6);
+            PointBlue.SetValue(Canvas.LeftProperty, (640 - XBlue) * .6);
+            PointBlue.SetValue(Canvas.TopProperty, YBlue * .6);
 
             return;
         }
@@ -159,17 +160,8 @@ public class Imageprocessing
     {
         if (Image != null)
         {
-            //Flips input image
-            MemoryStream Stream = new MemoryStream();
-            BitmapEncoder encoded = new BmpBitmapEncoder();
-            encoded.Frames.Add(BitmapFrame.Create(Image));
-            encoded.Save(Stream);
-            System.Drawing.Bitmap Bmp = new System.Drawing.Bitmap(Stream);            //Casts image to bitmap
-            Image<Hsv, Byte> flipped = new Image<Hsv, Byte>(Bmp);                   //Casts bitmap to image<Hsv, byte>
-            CvInvoke.Flip(flipped, flipped, Emgu.CV.CvEnum.FlipType.Horizontal);    //Flips the image in the horizontal
-
-            CvInvoke.Line(flipped, new System.Drawing.Point(XRed, 20), new System.Drawing.Point(XRed, 70), new MCvScalar(255, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
-            outputimage.Source = BitmapSourceConvert.ToBitmapSource1(flipped);
+            CvInvoke.Line(processedred, new System.Drawing.Point(XRed, YRed), new System.Drawing.Point(XBlue,YBlue), new MCvScalar(255, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
+            outputimage.Source = BitmapSourceConvert.ToBitmapSource1(processedred);
             return;
         }
         else { return; }

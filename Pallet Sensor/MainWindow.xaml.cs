@@ -254,27 +254,27 @@ namespace Pallet_Sensor
                 Canvas2.Children.Clear();
 
                 System.Windows.Shapes.Ellipse DepthPointRed = CreateEllipse.CircleRed();
-                System.Windows.Shapes.Ellipse DepthPointYellow = CreateEllipse.CircleYellow();
+                System.Windows.Shapes.Ellipse DepthPointBlue = CreateEllipse.CircleBlue();
                 System.Windows.Shapes.Ellipse ColorPointRed = CreateEllipse.CircleRed();
-                System.Windows.Shapes.Ellipse ColorPointYellow = CreateEllipse.CircleYellow();
+                System.Windows.Shapes.Ellipse ColorPointBlue = CreateEllipse.CircleBlue();
 
                 Canvas2.Children.Add(ColorPointRed);
-                Canvas2.Children.Add(ColorPointYellow);
+                Canvas2.Children.Add(ColorPointBlue);
 
                 Canvas1.Children.Add(DepthPointRed);
-                Canvas1.Children.Add(DepthPointYellow);
+                Canvas1.Children.Add(DepthPointBlue);
 
                 DepthPointRed.SetValue(Canvas.LeftProperty, (depthFrame.Width - XRMapped -3)*.6);
                 DepthPointRed.SetValue(Canvas.TopProperty, (YRMapped-3) *.6);
 
-                DepthPointYellow.SetValue(Canvas.LeftProperty, (depthFrame.Width - XBMapped-3) * .6);
-                DepthPointYellow.SetValue(Canvas.TopProperty, (YBMapped-3) * .6);
+                DepthPointBlue.SetValue(Canvas.LeftProperty, (depthFrame.Width - XBMapped-3) * .6);
+                DepthPointBlue.SetValue(Canvas.TopProperty, (YBMapped-3) * .6);
 
                 ColorPointRed.SetValue(Canvas.LeftProperty, (depthFrame.Width - XR-3) * .6);
                 ColorPointRed.SetValue(Canvas.TopProperty, (YR-3) * .6);
 
-                ColorPointYellow.SetValue(Canvas.LeftProperty, (depthFrame.Width - XB-3) * .6);
-                ColorPointYellow.SetValue(Canvas.TopProperty, (YB-3) * .6);
+                ColorPointBlue.SetValue(Canvas.LeftProperty, (depthFrame.Width - XB-3) * .6);
+                ColorPointBlue.SetValue(Canvas.TopProperty, (YB-3) * .6);
 
                 //Cleanup
                 depthFrame.Dispose();

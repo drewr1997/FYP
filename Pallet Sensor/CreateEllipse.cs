@@ -16,12 +16,12 @@ public class CreateEllipse
         return (Circle);
     }
 
-    public static System.Windows.Shapes.Ellipse CircleYellow()
+    public static System.Windows.Shapes.Ellipse CircleBlue()
     {
         System.Windows.Shapes.Ellipse Circle = new System.Windows.Shapes.Ellipse();
         Circle.Width = 6;
         Circle.Height = 6;
-        Circle.Stroke = Brushes.Yellow;
+        Circle.Stroke = Brushes.Blue;
         Circle.StrokeThickness = 2;
         return (Circle);
     }
