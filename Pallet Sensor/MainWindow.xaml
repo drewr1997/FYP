@@ -4,26 +4,27 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Pallet Sensor" Height="800" Width="1000" WindowStartupLocation="CenterScreen" WindowStyle="ThreeDBorderWindow" Closed="Window_Closed" KeyDown="Window_KeyDown">
+        Title="Pallet Sensor" Height="800" Width="1300" WindowStartupLocation="CenterScreen" WindowStyle="ThreeDBorderWindow" Closed="Window_Closed" KeyDown="Window_KeyDown">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="210*"/>
-            <RowDefinition Height="240*"/>
-            <RowDefinition Height="25*"/>
+            <RowDefinition Height="340"/>
+            <RowDefinition Height="340"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="500"/>
+            <ColumnDefinition Width="500"/>
+            <ColumnDefinition Width="238"/>
         </Grid.ColumnDefinitions>
         <!--Button to start service-->
-        <Button x:Name="Stream" Content="Start" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Width="75" Click="Stream_Click" Height="19" Grid.ColumnSpan="2" Grid.Row="2"/>
+        <Button x:Name="Stream" Content="Start" HorizontalAlignment="Center" VerticalAlignment="Center" Width="74" Click="Stream_Click" Height="19" Grid.ColumnSpan="2" Grid.Row="2"/>
 
         <!--Where streams will be displayed-->
-        <Image x:Name="Colorstream" Height="288"  Width="384" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0" Margin="0"/>
-        <Image x:Name="Depthstream" Height="288" Width="385" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Margin="0"/>
-        <Image x:Name="Processedstream" Height="288"  Width="384" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0" Grid.Row="1" Margin="0"/>
-        <Image x:Name="Outputstream" Height="288" Width="384" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1" Margin="0"/>
-        
+        <Image x:Name="Colorstream" Height="288"  Width="384" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0"/>
+        <Image x:Name="Depthstream" Height="288" Width="385" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
+        <Image x:Name="Processedstream" Height="288"  Width="384" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0" Grid.Row="1"/>
+        <Image x:Name="Outputstream" Height="288" Width="384" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1"/>
+
         <!--Borders on streams-->
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Center" Height="288"  VerticalAlignment="Center" Width="384" Grid.Column="1"  >
             <Canvas x:Name="Canvas1" Width="384" Height="288" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -38,23 +39,54 @@
             <Canvas x:Name="Canvas3" Width="384" Height="288" Background="#FF686767" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Border>
 
-        <Label Content="Color Stream" HorizontalAlignment="Center" Height="24" Margin="0" VerticalAlignment="Bottom" FontWeight="ExtraBold" FontFamily="Calibri" FontSize="14"/>
-        <Label Content="Depth Stream" HorizontalAlignment="Center" Height="24" Margin="0" VerticalAlignment="Bottom" FontWeight="ExtraBold" FontFamily="Calibri" FontSize="14" Grid.Column="1"/>
-        <Label Content="Red Coordinates" HorizontalAlignment="Left" Height="24" Margin="50,0,0,20" VerticalAlignment="Bottom" FontWeight="ExtraBold" FontFamily="Calibri" FontSize="14" Grid.Row="1" Background="{x:Null}" Foreground="Red"/>
-        <Label Content="Blue Coordinates" HorizontalAlignment="Left" Height="24" Margin="50,0,0,0" VerticalAlignment="Bottom" FontWeight="ExtraBold" FontFamily="Calibri" FontSize="14" Grid.Row="1" Grid.Column="0" Foreground="#FF00ADE0"/>
-        <Label Content="Z = " HorizontalAlignment="Left" Margin="370,0,0,20" Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" Width="30" Foreground="Red" FontSize="14"/>
-        <Label Content="Y = " HorizontalAlignment="Left" Margin="270,0,0,20" Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" Width="30" Background="{x:Null}" Foreground="Red" FontSize="14"/>
-        <Label Content="X = " HorizontalAlignment="Left" Margin="170,0,0,20" Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" Width="30" Foreground="Red" FontSize="14"/>
-        <Label x:Name="RCoordZ" Content="" HorizontalAlignment="Left" Margin="400,0,0,20" Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" Foreground="Red" FontSize="14"/>
-        <Label x:Name="RCoordX" Content="" HorizontalAlignment="Left" Margin="200,0,0,20" Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" Foreground="Red" FontSize="14"/>
-        <Label x:Name="RCoordY" Content="" HorizontalAlignment="Left" Margin="300,0,0,20" Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" Foreground="Red" FontSize="14"/>
+        <Label Content="Color Stream" HorizontalAlignment="Center" Height="24" VerticalAlignment="Bottom" FontWeight="ExtraBold" FontFamily="Calibri" FontSize="14"/>
+        <Label Content="Depth Stream" HorizontalAlignment="Center" Height="24" VerticalAlignment="Bottom" FontWeight="ExtraBold" FontFamily="Calibri" FontSize="14" Grid.Column="1"/>
+        <Label Content="Red Coordinates" HorizontalAlignment="Left" Height="24" Margin="50,0,0,20" VerticalAlignment="Bottom" FontWeight="ExtraBold" FontFamily="Calibri" FontSize="14" Grid.Row="2" Background="{x:Null}" Foreground="Red"/>
+        <Label Content="Blue Coordinates" HorizontalAlignment="Left" Height="24" Margin="50,0,0,0" VerticalAlignment="Bottom" FontWeight="ExtraBold" FontFamily="Calibri" FontSize="14" Grid.Row="2" Grid.Column="0" Foreground="#FF00ADE0"/>
+        <Label Content="Z = " HorizontalAlignment="Left" Margin="370,0,0,20" Grid.Row="2" Grid.Column="0" VerticalAlignment="Bottom" Width="30" Foreground="Red" FontSize="14"/>
+        <Label Content="Y = " HorizontalAlignment="Left" Margin="270,0,0,20" Grid.Row="2" Grid.Column="0" VerticalAlignment="Bottom" Width="30" Background="{x:Null}" Foreground="Red" FontSize="14"/>
+        <Label Content="X = " HorizontalAlignment="Left" Margin="170,0,0,20" Grid.Row="2" Grid.Column="0" VerticalAlignment="Bottom" Width="30" Foreground="Red" FontSize="14"/>
+        <Label x:Name="RCoordZ" Content="" HorizontalAlignment="Left" Margin="400,0,0,20" Grid.Row="2" Grid.Column="0" VerticalAlignment="Bottom" Foreground="Red" FontSize="14"/>
+        <Label x:Name="RCoordX" Content="" HorizontalAlignment="Left" Margin="200,0,0,20" Grid.Row="2" Grid.Column="0" VerticalAlignment="Bottom" Foreground="Red" FontSize="14"/>
+        <Label x:Name="RCoordY" Content="" HorizontalAlignment="Left" Margin="300,0,0,20" Grid.Row="2" Grid.Column="0" VerticalAlignment="Bottom" Foreground="Red" FontSize="14"/>
 
-        <Label Content="Z = " HorizontalAlignment="Left" Margin="370,0,0,0" Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" Width="30" Foreground="#FF00ADE0" Background="{x:Null}" FontSize="14"/>
-        <Label Content="Y = " HorizontalAlignment="Left" Margin="270,0,0,0" Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" Width="30" Foreground="#FF00ADE0" Background="{x:Null}" FontSize="14"/>
-        <Label Content="X = " HorizontalAlignment="Left" Margin="170,0,0,0" Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" Width="30" Foreground="#FF00ADE0" FontSize="14"/>
-        <Label x:Name="BCoordZ" Content="" HorizontalAlignment="Left" Margin="400,0,0,0" Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" Foreground="#FF00ADE0" FontSize="14"/>
-        <Label x:Name="BCoordX" Content="" HorizontalAlignment="Left" Margin="200,0,0,0" Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" Foreground="#FF00ADE0" FontSize="14"/>
-        <Label x:Name="BCoordY" Content="" HorizontalAlignment="Left" Margin="300,0,0,0" Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" Foreground="#FF00ADE0" Background="{x:Null}"/>
+        <Label Content="Z = " HorizontalAlignment="Left" Margin="370,0,0,0" Grid.Row="2" Grid.Column="0" VerticalAlignment="Bottom" Width="30" Foreground="#FF00ADE0" Background="{x:Null}" FontSize="14"/>
+        <Label Content="Y = " HorizontalAlignment="Left" Margin="270,0,0,0" Grid.Row="2" Grid.Column="0" VerticalAlignment="Bottom" Width="30" Foreground="#FF00ADE0" Background="{x:Null}" FontSize="14"/>
+        <Label Content="X = " HorizontalAlignment="Left" Margin="170,0,0,0" Grid.Row="2" Grid.Column="0" VerticalAlignment="Bottom" Width="30" Foreground="#FF00ADE0" FontSize="14"/>
+        <Label x:Name="BCoordZ" Content="" HorizontalAlignment="Left" Margin="400,0,0,0" Grid.Row="2" Grid.Column="0" VerticalAlignment="Bottom" Foreground="#FF00ADE0" FontSize="14"/>
+        <Label x:Name="BCoordX" Content="" HorizontalAlignment="Left" Margin="200,0,0,0" Grid.Row="2" Grid.Column="0" VerticalAlignment="Bottom" Foreground="#FF00ADE0" FontSize="14"/>
+        <Label x:Name="BCoordY" Content="" HorizontalAlignment="Left" Margin="300,0,0,0" Grid.Row="2" Grid.Column="0" VerticalAlignment="Bottom" Foreground="#FF00ADE0" Background="{x:Null}"/>
+        <Grid Grid.Column="2" HorizontalAlignment="Center" Height="250" Grid.Row="1" VerticalAlignment="Center" Width="250">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Label x:Name="_0" Content="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12"/>
+            <Label x:Name="_1" Content="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" Grid.Column="1"/>
+            <Label x:Name="_2" Content="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" Grid.Column="2"/>
+            <Label x:Name="_3" Content="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" Grid.Column="3"/>
+            <Label x:Name="_4" Content="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" Grid.Column="0" Grid.Row="1"/>
+            <Label x:Name="_5" Content="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" Grid.Column="1" Grid.Row="1"/>
+            <Label x:Name="_6" Content="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" Grid.Column="2" Grid.Row="1"/>
+            <Label x:Name="_7" Content="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" Grid.Column="3" Grid.Row="1"/>
+            <Label x:Name="_8" Content="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" Grid.Column="0" Grid.Row="2"/>
+            <Label x:Name="_9" Content="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" Grid.Column="1" Grid.Row="2"/>
+            <Label x:Name="_10" Content="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" Grid.Column="2" Grid.Row="2"/>
+            <Label x:Name="_11" Content="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" Grid.Column="3" Grid.Row="2"/>
+            <Label x:Name="_12" Content="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" Grid.Column="0" Grid.Row="3"/>
+            <Label x:Name="_13" Content="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" Grid.Column="1" Grid.Row="3"/>
+            <Label x:Name="_14" Content="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" Grid.Column="2" Grid.Row="3"/>
+            <Label x:Name="_15" Content="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" Grid.Column="3" Grid.Row="3"/>
+        </Grid>
+        <Label Content="Pallet Co-ordinate Frame" Grid.Column="2" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Top" Margin="0,30,0,0" FontWeight="Bold" FontSize="14"/>
 
     </Grid>
 </Window>

@@ -21,8 +21,11 @@ namespace Pallet_Sensor
         private WriteableBitmap colorBmap;              //Declares place to store color bitmap
         private DepthImagePixel[] depthPixels;          //Declares place to store depth data
         private byte[] colorPixels;                     //Declares place to store color data
-        private static int XB, YB, XR=0, YR=0, XRMapped, YRMapped, XBMapped, YBMapped;
-        private int i = 1, j=0, k=0;
+        private static int XB, YB, XR=0, YR=0, XRMapped, YRMapped, XBMapped, YBMapped, ZR, ZB;
+        private static double[] ObjectFrame = {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
+        private double Rxcoord, Rycoord, Bxcoord, Bycoord; //stores coordinate info
+        private double[] RedPoint = new double[3], BluePoint = new double[3];
+        private int i = 1, j = 0, k = 0, m = 0;
 
         private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
@@ -184,7 +187,6 @@ namespace Pallet_Sensor
                     pixelData,
                     depthFrame.Width * depthFrame.BytesPerPixel);
 
-                double Rxcoord, Rycoord, Bxcoord, Bycoord; //stores coordinate info
                 double vertF = 609.275495, horzF = 589.3666835; //Focal lengths
 
                 ColorImagePoint[] color = new ColorImagePoint[depthFrame.PixelDataLength];
@@ -206,14 +208,14 @@ namespace Pallet_Sensor
                         YRMapped = (h - XR) / 640;
 
                         //Red coordinates
-                        int Rzcoord = this.depthPixels[(640 - XRMapped) + (YRMapped * 640)].Depth;
+                        ZR = this.depthPixels[(640 - XRMapped) + (YRMapped * 640)].Depth;
 
-                        Rxcoord = (Rzcoord * (320 - XRMapped)) / horzF;
-                        Rycoord = (Rzcoord * (240 - YRMapped)) / vertF;
+                        Rxcoord = (ZR * (320 - XRMapped)) / horzF;
+                        Rycoord = (ZR * (240 - YRMapped)) / vertF;
 
                         RCoordX.Content = Math.Round(Rxcoord);
                         RCoordY.Content = Math.Round(Rycoord);
-                        RCoordZ.Content = Rzcoord;
+                        RCoordZ.Content = ZR;
                         break;
                     }
                 }
@@ -234,14 +236,14 @@ namespace Pallet_Sensor
                         YBMapped = (h - XB) / 640;
 
                         //Red coordinates
-                        int Bzcoord = this.depthPixels[(640 - XBMapped) + (YBMapped * 640)].Depth;
+                        ZB = this.depthPixels[(640 - XBMapped) + (YBMapped * 640)].Depth;
 
-                        Bxcoord = (Bzcoord * (320 - XBMapped)) / horzF;
-                        Bycoord = (Bzcoord * (240 - YBMapped)) / vertF;
+                        Bxcoord = (ZB * (320 - XBMapped)) / horzF;
+                        Bycoord = (ZB * (240 - YBMapped)) / vertF;
 
                         BCoordX.Content = Math.Round(Bxcoord);
                         BCoordY.Content = Math.Round(Bycoord);
-                        BCoordZ.Content = Bzcoord;
+                        BCoordZ.Content = ZB;
                         break;
                     }
                 }
@@ -278,7 +280,84 @@ namespace Pallet_Sensor
 
                 //Cleanup
                 depthFrame.Dispose();
+                CoordinateFrameCalc();
             }
+        }
+
+        private void CoordinateFrameCalc()
+        {
+            RedPoint[0] = Rxcoord;
+            RedPoint[1] = Rycoord;
+            RedPoint[2] = ZR;
+
+            BluePoint[0] = Bxcoord;
+            BluePoint[1] = Bycoord;
+            BluePoint[2] = ZB;
+
+            Double Px = BluePoint[0] + ((RedPoint[0] - BluePoint[0]) / 2);
+            Double Py = BluePoint[1] + ((RedPoint[1] - BluePoint[1]) / 2);
+            Double Pz = BluePoint[2] + ((RedPoint[2] - BluePoint[2]) / 2);
+
+            ObjectFrame[3] = Px;
+            ObjectFrame[7] = Py;
+            ObjectFrame[11] = Pz;
+
+            m = 0;
+            foreach (double element in RedPoint)
+            {
+                RedPoint[m] = BluePoint[m] - RedPoint[m];
+                m++;
+            }
+            m = 0;
+
+            RedPoint[1] = 0;
+           double mag = Math.Sqrt(RedPoint[0]*RedPoint[0] + RedPoint[1]*RedPoint[1] + RedPoint[2]*RedPoint[2]);
+            
+            foreach (double element in RedPoint)
+            {
+                RedPoint[m] = RedPoint[m] / mag;
+                m++;
+            }
+            m = 0;
+
+            ObjectFrame[0] = RedPoint[0];
+            ObjectFrame[4] = RedPoint[1];
+            ObjectFrame[8] = RedPoint[2];
+
+            BluePoint[0] = (1 * RedPoint[2]);
+            BluePoint[1] = 0;
+            BluePoint[2] = -(1 * RedPoint[0]);
+
+            mag = Math.Sqrt(BluePoint[0] * BluePoint[0] + BluePoint[1] * BluePoint[1] + BluePoint[2] * BluePoint[2]);
+
+            foreach (double element in BluePoint)
+            {
+                BluePoint[m] = BluePoint[m] / mag;
+                m++;
+            }
+            m = 0;
+
+            ObjectFrame[2] = BluePoint[0];
+            ObjectFrame[6] = BluePoint[1];
+            ObjectFrame[10] = BluePoint[2];
+
+            _0.Content = Math.Round(ObjectFrame[0],2);
+            _1.Content = Math.Round(ObjectFrame[1], 2);
+            _2.Content = Math.Round(ObjectFrame[2], 2);
+            _3.Content = Math.Round(ObjectFrame[3], 2);
+            _4.Content = Math.Round(ObjectFrame[4], 2);
+            _5.Content = Math.Round(ObjectFrame[5], 2);
+            _6.Content = Math.Round(ObjectFrame[6], 2);
+            _7.Content = Math.Round(ObjectFrame[7], 2);
+            _8.Content = Math.Round(ObjectFrame[8], 2);
+            _9.Content = Math.Round(ObjectFrame[9], 2);
+            _10.Content = Math.Round(ObjectFrame[10], 2);
+            _11.Content = Math.Round(ObjectFrame[11], 2);
+            _12.Content = Math.Round(ObjectFrame[12], 2);
+            _13.Content = Math.Round(ObjectFrame[13], 2);
+            _14.Content = Math.Round(ObjectFrame[14], 2);
+            _15.Content = Math.Round(ObjectFrame[15], 2);
+   
         }
 
         //Handles closing of the window
