@@ -158,16 +158,40 @@ public class Imageprocessing
     //Create output screen
     public static void OutputScreen(BitmapSource Image, System.Windows.Controls.Image outputimage, double angle)
     {
+        Image<Hsv,Byte> Compass = new Image<Hsv, byte>(@"C:\Users\Drew\Desktop\Pallet Sensor\Pallet Sensor\Pallet Sensor\Compass.png");
+
         if (Image != null)
         {
             int length = 50;
             double opposite = Math.Sin(angle)* length;
-            int XOut = Convert.ToInt32(320 + opposite);
-            double adjacent = Math.Sqrt((length * length) - (opposite * opposite))  ;
-            int YOut = Convert.ToInt32(240 + adjacent);
+            if (opposite != null)
+                {
+                //int XOut = Convert.ToInt32(320 + opposite);
+                //double adjacent = Math.Sqrt((length * length) - (opposite * opposite));
+                //int YOut = Convert.ToInt32(240 + adjacent);
 
-            CvInvoke.Line(processedred, new System.Drawing.Point(320, 240), new System.Drawing.Point(XOut, YOut), new MCvScalar(255, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
-            outputimage.Source = BitmapSourceConvert.ToBitmapSource1(processedred);
+                int X;
+
+                if (angle != 0 && angle > 0)
+                {
+                    X = Convert.ToInt32(320 - (200 * ((Math.Abs(angle)-90)/35)));
+                }
+                else if (angle != 0 && angle < 0)
+                {
+                    X = Convert.ToInt32(320 + (200 * ((Math.Abs(angle) - 90) / 35)));
+                }
+                else
+                {
+                    X = 320;
+                }
+
+                Rectangle roi = new Rectangle(120, 20, 400, 60);
+                processedred.Draw(roi, new Hsv(255,255,255),5);
+                CvInvoke.Line(processedred, new System.Drawing.Point(320,20), new System.Drawing.Point(320,80), new MCvScalar(255, 255, 255) , 5, Emgu.CV.CvEnum.LineType.Filled);
+                CvInvoke.Line(processedred, new System.Drawing.Point(X, 20), new System.Drawing.Point(X, 80), new MCvScalar(140, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
+
+                outputimage.Source = BitmapSourceConvert.ToBitmapSource1(processedred);
+            }
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Pallet_Sensor
         private double Rxcoord, Rycoord, Bxcoord, Bycoord; //stores coordinate info
         private double[] RedPoint = new double[3], BluePoint = new double[3];
         private int i = 1, j = 0, k = 0, m = 0;
-        public static double anglex = 0;
+        public static double anglex = 0, angle1=0;
 
         private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
@@ -136,7 +136,7 @@ namespace Pallet_Sensor
                 XR = Imageprocessing.XRed;
                 YR = Imageprocessing.YRed;
                 //Sets output screen
-                Imageprocessing.OutputScreen(bmap, Outputstream, anglex);
+                Imageprocessing.OutputScreen(bmap, Outputstream, angle1);
                 i = 0;
             }
             else
@@ -360,6 +360,7 @@ namespace Pallet_Sensor
             _15.Content = Math.Round(ObjectFrame[15], 2);
 
             anglex = Math.Atan(ObjectFrame[8] / ObjectFrame[0]);
+            angle1 = Math.Atan(ObjectFrame[11] / ObjectFrame[3])*(180/Math.PI);
             angle.Content = anglex*(180/Math.PI);
         }
 
