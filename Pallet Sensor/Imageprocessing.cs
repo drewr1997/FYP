@@ -89,7 +89,7 @@ public class Imageprocessing
 
             //Blue
             Image<Gray, Byte> ThrBlue;                                                     //Creates two Grayscale images that will be used when segmenting
-            ThrBlue = processedred.InRange(new Hsv(100,110,70), new Hsv(120, 255, 150));    //Handles second range for RED
+            ThrBlue = processedred.InRange(new Hsv(100,170,80), new Hsv(120, 255, 180));    //Handles second range for RED
 
             //Handles noise and cleans image
             CvInvoke.MorphologyEx(ThrBlue, ThrBlue, Emgu.CV.CvEnum.MorphOp.Open, kernel, new System.Drawing.Point(0, 0), 1, Emgu.CV.CvEnum.BorderType.Default, new MCvScalar(1));
@@ -156,14 +156,18 @@ public class Imageprocessing
     }
 
     //Create output screen
-    public static void OutputScreen(BitmapSource Image, System.Windows.Controls.Image outputimage)
+    public static void OutputScreen(BitmapSource Image, System.Windows.Controls.Image outputimage, double angle)
     {
         if (Image != null)
         {
-            CvInvoke.Line(processedred, new System.Drawing.Point(XRed, YRed), new System.Drawing.Point(XBlue,YBlue), new MCvScalar(255, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
+            int length = 50;
+            double opposite = Math.Sin(angle)* length;
+            int XOut = Convert.ToInt32(320 + opposite);
+            double adjacent = Math.Sqrt((length * length) - (opposite * opposite))  ;
+            int YOut = Convert.ToInt32(240 + adjacent);
+
+            CvInvoke.Line(processedred, new System.Drawing.Point(320, 240), new System.Drawing.Point(XOut, YOut), new MCvScalar(255, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
             outputimage.Source = BitmapSourceConvert.ToBitmapSource1(processedred);
-            return;
         }
-        else { return; }
     }
 }
