@@ -89,7 +89,7 @@ public class Imageprocessing
 
             //Blue
             Image<Gray, Byte> ThrBlue;                                                     //Creates two Grayscale images that will be used when segmenting
-            ThrBlue = processedred.InRange(new Hsv(100,170,80), new Hsv(120, 255, 180));    //Handles second range for RED
+            ThrBlue = processedred.InRange(new Hsv(90,120,80), new Hsv(120, 255, 180));    //Handles second range for RED
 
             //Handles noise and cleans image
             CvInvoke.MorphologyEx(ThrBlue, ThrBlue, Emgu.CV.CvEnum.MorphOp.Open, kernel, new System.Drawing.Point(0, 0), 1, Emgu.CV.CvEnum.BorderType.Default, new MCvScalar(1));
@@ -193,11 +193,11 @@ public class Imageprocessing
 
                 if (angle1 != 0 && angle1 > 0)
                 {
-                    Y = Convert.ToInt32(240 - (200 * ((Math.Abs(angle1)) / 35)));
+                    Y = Convert.ToInt32(240 + (200 * ((Math.Abs(angle1)) / 35)));
                 }
                 else if (angle1 != 0 && angle1 < 0)
                 {
-                    Y = Convert.ToInt32(240 + (200 * ((Math.Abs(angle1)) / 35)));
+                    Y = Convert.ToInt32(240 - (200 * ((Math.Abs(angle1)) / 35)));
                 }
                 else
                 {
@@ -210,11 +210,12 @@ public class Imageprocessing
                 CvInvoke.Line(processedred, new System.Drawing.Point(20, Y), new System.Drawing.Point(80, Y), new MCvScalar(140, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
 
                 //Angle indicator
-                X1 = Convert.ToInt32(Math.Cos(angle2) * r);
-                Y1 = Convert.ToInt32(Math.Sin(angle2) * r);
+           
+                 //X1 = Convert.ToInt32(Math.Cos(angle2) * r);
+                 //Y1 = Convert.ToInt32(Math.Sin(angle2) * r);
 
-                CvInvoke.Line(processedred, new System.Drawing.Point(320+X1, 240+Y1), new System.Drawing.Point(320-X1, 240-Y1), new MCvScalar(140, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
-                CvInvoke.Line(processedred, new System.Drawing.Point(420, 240), new System.Drawing.Point(220, 240), new MCvScalar(255, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
+                 //CvInvoke.Line(processedred, new System.Drawing.Point(320 + X1, 240 + Y1), new System.Drawing.Point(320 - X1, 240 - Y1), new MCvScalar(140, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
+                 //CvInvoke.Line(processedred, new System.Drawing.Point(420, 240), new System.Drawing.Point(220, 240), new MCvScalar(255, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
 
                 //Setting output source
                 outputimage.Source = BitmapSourceConvert.ToBitmapSource1(processedred);

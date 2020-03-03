@@ -188,6 +188,8 @@ namespace Pallet_Sensor
                     pixelData,
                     depthFrame.Width * depthFrame.BytesPerPixel);
 
+                //
+
                 double vertF = 609.275495, horzF = 589.3666835; //Focal lengths
 
                 ColorImagePoint[] color = new ColorImagePoint[depthFrame.PixelDataLength];
