@@ -40,12 +40,12 @@ public class Imageprocessing
             CvInvoke.MorphologyEx(Thrred, Thrred, Emgu.CV.CvEnum.MorphOp.Open, kernel, new System.Drawing.Point(0, 0), 1, Emgu.CV.CvEnum.BorderType.Default, new MCvScalar(1));
             CvInvoke.MorphologyEx(Thrred, Thrred, Emgu.CV.CvEnum.MorphOp.Dilate, kernel, new System.Drawing.Point(0, 0), 1, Emgu.CV.CvEnum.BorderType.Default, new MCvScalar(1));
 
-            //Extracts only RED parts from orignal image
-            Mat Mask;                                                                  //Creates Mat for converting mask to Mat
-            Mask = Thrred.Mat;                                                           //Casts mask to Mat
-            Image<Hsv, byte> Redisolated = new Image<Hsv, byte>(processedred.Width, processedred.Height);    //Creates Image<Hsv,byte> for final processedred image
-
-            //CvInvoke.BitwiseAnd(processedred, processedred, Redisolated, Mask);                     //ANDS mask with orignal image to retain only portions that are RED
+            // Used to display red parts of original image
+                    //Extracts only RED parts from orignal image
+                    //Mat Mask;                                                                    //Creates Mat for converting mask to Mat
+                    //Mask = Thrred.Mat;                                                           //Casts mask to Mat
+                    //Image<Hsv, byte> Redisolated = new Image<Hsv, byte>(processedred.Width, processedred.Height);    //Creates Image<Hsv,byte> for final processedred image
+                    //CvInvoke.BitwiseAnd(processedred, processedred, Redisolated, Mask);                     //ANDS mask with orignal image to retain only portions that are RED
 
             //Extracts biggest blob
             //Variables
@@ -75,14 +75,14 @@ public class Imageprocessing
             XRed = boundingrectred.X + (boundingrectred.Width / 2);
             YRed = boundingrectred.Y + (boundingrectred.Height / 2);
 
-            //CvInvoke.DrawContours(processedred, ContoursRed, largestcontourindexred, new MCvScalar(255, 255, 255), 10, Emgu.CV.CvEnum.LineType.Filled, HierarchyRed, 0); //Draws biggest contour on blank image
-         
-            //processedred.Draw(boundingrectred,new Hsv(255,255,255), 3);
-            //CvInvoke.Circle(processedred, new System.Drawing.Point(640-XRed, YRed), 4, new MCvScalar(255),2, Emgu.CV.CvEnum.LineType.Filled);
-            //outputimage.Source = BitmapSourceConvert.ToBitmapSource1(processedred1);
+            //Old Method used for overlay
+                    //CvInvoke.DrawContours(processedred, ContoursRed, largestcontourindexred, new MCvScalar(255, 255, 255), 10, Emgu.CV.CvEnum.LineType.Filled, HierarchyRed, 0); //Draws biggest contour on blank image
+                    //processedred.Draw(boundingrectred,new Hsv(255,255,255), 3);
+                    //CvInvoke.Circle(processedred, new System.Drawing.Point(640-XRed, YRed), 4, new MCvScalar(255),2, Emgu.CV.CvEnum.LineType.Filled);
+                    //outputimage.Source = BitmapSourceConvert.ToBitmapSource1(processedred1);
 
             //Cleanup
-            Mask.Dispose();
+            //Mask.Dispose();
             Thrred.Dispose();
             Streamred.Dispose();
             myBmpred.Dispose();
@@ -95,12 +95,12 @@ public class Imageprocessing
             CvInvoke.MorphologyEx(ThrBlue, ThrBlue, Emgu.CV.CvEnum.MorphOp.Open, kernel, new System.Drawing.Point(0, 0), 1, Emgu.CV.CvEnum.BorderType.Default, new MCvScalar(1));
             CvInvoke.MorphologyEx(ThrBlue, ThrBlue, Emgu.CV.CvEnum.MorphOp.Dilate, kernel, new System.Drawing.Point(0, 0), 1, Emgu.CV.CvEnum.BorderType.Default, new MCvScalar(1));
 
-            //Extracts only RED parts from orignal image
-            Mat Mask1;                                                                  //Creates Mat for converting mask to Mat
-            Mask1 = ThrBlue.Mat;                                                           //Casts mask to Mat
-            Image<Hsv, byte> Bluleisolated = new Image<Hsv, byte>(processedred.Width, processedred.Height);    //Creates Image<Hsv,byte> for final processedred image
-
-            //CvInvoke.BitwiseAnd(processedred, processedred, Redisolated, Mask);                     //ANDS mask with orignal image to retain only portions that are RED
+            //Used to display blue parts of original image
+                    //Extracts only RED parts from orignal image
+                    //Mat Mask1;                                                                  //Creates Mat for converting mask to Mat
+                    //Mask1 = ThrBlue.Mat;                                                           //Casts mask to Mat
+                    //Image<Hsv, byte> Bluleisolated = new Image<Hsv, byte>(processedred.Width, processedred.Height);    //Creates Image<Hsv,byte> for final processedred image
+                    //CvInvoke.BitwiseAnd(processedred, processedred, Redisolated, Mask);                     //ANDS mask with orignal image to retain only portions that are RED
 
             //Extracts biggest blob
             //Variables
@@ -132,7 +132,7 @@ public class Imageprocessing
             YBlue = boundingrectBlue.Y + boundingrectBlue.Height / 2;
 
             //Cleanup
-            Mask1.Dispose();
+            //Mask1.Dispose();
             ThrBlue.Dispose();
 
             //Add point to images
@@ -144,7 +144,7 @@ public class Imageprocessing
             Canvas3.Children.Add(PointRed);
             Canvas3.Children.Add(PointBlue);
 
-            PointRed.SetValue(Canvas.LeftProperty, (640 - XRed) * .6);
+            PointRed.SetValue(Canvas.LeftProperty, (640 - XRed) * .6);      //0.6 used as the stream sizes are 0.6 times the actual resolution
             PointRed.SetValue(Canvas.TopProperty, YRed * .6);
 
             PointBlue.SetValue(Canvas.LeftProperty, (640 - XBlue) * .6);
