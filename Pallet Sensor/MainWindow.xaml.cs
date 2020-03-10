@@ -22,7 +22,7 @@ namespace Pallet_Sensor
         private DepthImagePixel[] depthPixels;          //Declares place to store depth data
         private byte[] colorPixels;                     //Declares place to store color data
         private static int XB, YB, XR=0, YR=0, XRMapped, YRMapped, XBMapped, YBMapped, ZR, ZB;
-        private static double[] ObjectFrame = {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
+        public static double[] ObjectFrame = {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
         private double Rxcoord, Rycoord, Bxcoord, Bycoord; //stores coordinate info
         private double[] RedPoint = new double[3], BluePoint = new double[3];
         private int i = 1, j = 0, k = 0, m = 0;
@@ -136,7 +136,7 @@ namespace Pallet_Sensor
                 XR = Imageprocessing.XRed;
                 YR = Imageprocessing.YRed;
                 //Sets output screen
-                Imageprocessing.OutputScreen(bmap, Outputstream, angle1, angle2, angle3);
+                Imageprocessing.OutputScreen(bmap, Outputstream, anglex, angle2, angle3, ObjectFrame[3], ObjectFrame[11]);
                 i = 0;
             }
             else
@@ -364,7 +364,7 @@ namespace Pallet_Sensor
             _15.Content = Math.Round(ObjectFrame[15], 2);
 
             anglex = Math.Atan(ObjectFrame[8] / ObjectFrame[0]);
-            angle1 = Math.Atan(ObjectFrame[11] / ObjectFrame[3])*(180/Math.PI);
+            angle1 = Math.Atan(ObjectFrame[11] / ObjectFrame[3])*(180/Math.PI); // 
             angle2 = Math.Atan(ObjectFrame[7] / ObjectFrame[11]) * (180 / Math.PI);
             
             angle.Content = anglex*(180/Math.PI);

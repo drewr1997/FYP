@@ -156,70 +156,89 @@ public class Imageprocessing
     }
 
     //Create output screen
-    public static void OutputScreen(BitmapSource Image, System.Windows.Controls.Image outputimage, double angle, double angle1, double angle2)
+    public static void OutputScreen(BitmapSource Image, System.Windows.Controls.Image outputimage, double angle, double angle1, double angle2, double x, double y)
     {
         if (Image != null)
         {
-            int length = 50;
-            int r = 100;
-            double opposite = Math.Sin(angle)* length;
+            //int length = 50;
+            //int r = 100;
+            //double opposite = Math.Sin(angle)* length;
+            int x1, x2, x3, y1, y2, y3, w=200;
+            Image<Hsv, byte> blank = new Image<Hsv, byte>(processedred.Width, processedred.Height);
 
-            if (opposite != null)
-                {
+            CvInvoke.Line(blank, new System.Drawing.Point(320, 480), new System.Drawing.Point(320, 430), new MCvScalar(255, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
+            CvInvoke.Line(blank, new System.Drawing.Point(320, 430), new System.Drawing.Point(300, 450), new MCvScalar(255, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
+            CvInvoke.Line(blank, new System.Drawing.Point(320, 430), new System.Drawing.Point(340, 450), new MCvScalar(255, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
 
-                int X, Y, X1, Y1;
+            x1 = Convert.ToInt32(320 - (x/4000*640));
+            y1 = Convert.ToInt32(480- (y/4000*480));
+            CvInvoke.Circle(blank, new System.Drawing.Point(x1, y1), 5, new MCvScalar(255 , 255, 255), 2 , Emgu.CV.CvEnum.LineType.Filled);
 
-                // Horizontal Indicator
+            x2 = Convert.ToInt32(x1 + (w / 2) * Math.Cos(-angle));
+            y2 = Convert.ToInt32(y1 - (w / 2) * Math.Sin(-angle));
+            x3 = Convert.ToInt32(x1 - (w / 2) * Math.Cos(-angle));
+            y3 = Convert.ToInt32(y1 + (w / 2) * Math.Sin(-angle));
 
-                if (angle != 0 && angle > 0)
-                {
-                    X = Convert.ToInt32(320 - (200 * ((Math.Abs(angle)-90)/35)));
-                }
-                else if (angle != 0 && angle < 0)
-                {
-                    X = Convert.ToInt32(320 + (200 * ((Math.Abs(angle) - 90) / 35)));
-                }
-                else
-                {
-                    X = 320;
-                }
+        
 
-                Rectangle horz = new Rectangle(120, 20, 400, 60);
-                processedred.Draw(horz, new Hsv(255, 255, 255), 5);
-                CvInvoke.Line(processedred, new System.Drawing.Point(320, 20), new System.Drawing.Point(320, 80), new MCvScalar(255, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
-                CvInvoke.Line(processedred, new System.Drawing.Point(X, 20), new System.Drawing.Point(X, 80), new MCvScalar(140, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
+            CvInvoke.Line(blank, new System.Drawing.Point(x2, y2), new System.Drawing.Point(x3, y3), new MCvScalar(255, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
 
-                // Vertical Indicator
+            //if (opposite != null)
+            //    {
 
-                if (angle1 != 0 && angle1 > 0)
-                {
-                    Y = Convert.ToInt32(240 + (200 * ((Math.Abs(angle1)) / 35)));
-                }
-                else if (angle1 != 0 && angle1 < 0)
-                {
-                    Y = Convert.ToInt32(240 - (200 * ((Math.Abs(angle1)) / 35)));
-                }
-                else
-                {
-                    Y = 240;
-                }
+            //    int X, Y, X1, Y1;
 
-                Rectangle vert = new Rectangle(20, 40, 60, 400);
-                processedred.Draw(vert, new Hsv(255, 255, 255), 5);
-                CvInvoke.Line(processedred, new System.Drawing.Point(20, 240), new System.Drawing.Point(80, 240), new MCvScalar(255, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
-                CvInvoke.Line(processedred, new System.Drawing.Point(20, Y), new System.Drawing.Point(80, Y), new MCvScalar(140, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
+            //    // Horizontal Indicator
 
-                //Angle indicator
-           
-                 //X1 = Convert.ToInt32(Math.Cos(angle2) * r);
-                 //Y1 = Convert.ToInt32(Math.Sin(angle2) * r);
+            //    if (angle != 0 && angle > 0)
+            //    {
+            //        X = Convert.ToInt32(320 - (200 * ((Math.Abs(angle)-90)/35)));
+            //    }
+            //    else if (angle != 0 && angle < 0)
+            //    {
+            //        X = Convert.ToInt32(320 + (200 * ((Math.Abs(angle) - 90) / 35)));
+            //    }
+            //    else
+            //    {
+            //        X = 320;
+            //    }
 
-                 //CvInvoke.Line(processedred, new System.Drawing.Point(320 + X1, 240 + Y1), new System.Drawing.Point(320 - X1, 240 - Y1), new MCvScalar(140, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
-                 //CvInvoke.Line(processedred, new System.Drawing.Point(420, 240), new System.Drawing.Point(220, 240), new MCvScalar(255, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
+            //    Rectangle horz = new Rectangle(120, 20, 400, 60);
+            //    processedred.Draw(horz, new Hsv(255, 255, 255), 5);
+            //    CvInvoke.Line(processedred, new System.Drawing.Point(320, 20), new System.Drawing.Point(320, 80), new MCvScalar(255, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
+            //    CvInvoke.Line(processedred, new System.Drawing.Point(X, 20), new System.Drawing.Point(X, 80), new MCvScalar(140, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
 
-                //Setting output source
-                outputimage.Source = BitmapSourceConvert.ToBitmapSource1(processedred);
-            }
+            //    // Vertical Indicator
+
+            //    if (angle1 != 0 && angle1 > 0)
+            //    {
+            //        Y = Convert.ToInt32(240 + (200 * ((Math.Abs(angle1)) / 35)));
+            //    }
+            //    else if (angle1 != 0 && angle1 < 0)
+            //    {
+            //        Y = Convert.ToInt32(240 - (200 * ((Math.Abs(angle1)) / 35)));
+            //    }
+            //    else
+            //    {
+            //        Y = 240;
+            //    }
+
+            //    Rectangle vert = new Rectangle(20, 40, 60, 400);
+            //    processedred.Draw(vert, new Hsv(255, 255, 255), 5);
+            //    CvInvoke.Line(processedred, new System.Drawing.Point(20, 240), new System.Drawing.Point(80, 240), new MCvScalar(255, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
+            //    CvInvoke.Line(processedred, new System.Drawing.Point(20, Y), new System.Drawing.Point(80, Y), new MCvScalar(140, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
+
+            //Angle indicator
+
+            //X1 = Convert.ToInt32(Math.Cos(angle2) * r);
+            //Y1 = Convert.ToInt32(Math.Sin(angle2) * r);
+
+            //CvInvoke.Line(processedred, new System.Drawing.Point(320 + X1, 240 + Y1), new System.Drawing.Point(320 - X1, 240 - Y1), new MCvScalar(140, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
+            //CvInvoke.Line(processedred, new System.Drawing.Point(420, 240), new System.Drawing.Point(220, 240), new MCvScalar(255, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
+
+            //Setting output source
+            outputimage.Source = BitmapSourceConvert.ToBitmapSource1(blank);
+            
         }
     }
 }
