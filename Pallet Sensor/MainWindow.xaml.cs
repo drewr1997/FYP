@@ -136,7 +136,7 @@ namespace Pallet_Sensor
                 XR = Imageprocessing.XRed;
                 YR = Imageprocessing.YRed;
                 //Sets output screen
-                Imageprocessing.OutputScreen(bmap, Outputstream, anglex, angle2, angle3, ObjectFrame[3], ObjectFrame[11]);
+                Imageprocessing.OutputScreen(bmap, Outputstream, anglex, ObjectFrame[3], ObjectFrame[11]);
                 i = 0;
             }
             else
@@ -207,7 +207,10 @@ namespace Pallet_Sensor
                 {
                     if (color[h].Y == YR)
                     {
-                        XRMapped = h % 640;
+                        if (h % 640 != 0)
+                        {
+                            XRMapped = h % 640;
+                        }
                         YRMapped = (h - XR) / 640;
 
                         //Red coordinates
@@ -235,7 +238,10 @@ namespace Pallet_Sensor
                 {
                     if (color[h].Y == YB)
                     {
-                        XBMapped = h % 640;
+                        if (h % 640 != 0)
+                        {
+                            XBMapped = h % 640;
+                        }
                         YBMapped = (h - XB) / 640;
 
                         //Red coordinates
@@ -316,7 +322,7 @@ namespace Pallet_Sensor
             m = 0;
 
             RedPoint[1] = 0;
-           double mag = Math.Sqrt(RedPoint[0]*RedPoint[0] + RedPoint[1]*RedPoint[1] + RedPoint[2]*RedPoint[2]);
+            double mag = Math.Sqrt(RedPoint[0]*RedPoint[0] + RedPoint[1]*RedPoint[1] + RedPoint[2]*RedPoint[2]);
             
             foreach (double element in RedPoint)
             {
@@ -329,45 +335,55 @@ namespace Pallet_Sensor
             ObjectFrame[4] = RedPoint[1];
             ObjectFrame[8] = RedPoint[2];
 
-            BluePoint[0] = (1 * RedPoint[2]);
-            BluePoint[1] = 0;
-            BluePoint[2] = -(1 * RedPoint[0]);
-
-            mag = Math.Sqrt(BluePoint[0] * BluePoint[0] + BluePoint[1] * BluePoint[1] + BluePoint[2] * BluePoint[2]);
-
-            foreach (double element in BluePoint)
-            {
-                BluePoint[m] = BluePoint[m] / mag;
-                m++;
-            }
-            m = 0;
+            BluePoint[0] = RedPoint[1] * 0 - RedPoint[2] * 1;
+            BluePoint[1] = RedPoint[2] * 0 - RedPoint[0] * 0;
+            BluePoint[2] = RedPoint[0] * 1 - RedPoint[1] * 0;
 
             ObjectFrame[2] = BluePoint[0];
             ObjectFrame[6] = BluePoint[1];
             ObjectFrame[10] = BluePoint[2];
 
-            _0.Content = Math.Round(ObjectFrame[0],2);
-            _1.Content = Math.Round(ObjectFrame[1], 2);
-            _2.Content = Math.Round(ObjectFrame[2], 2);
-            _3.Content = Math.Round(ObjectFrame[3], 2);
-            _4.Content = Math.Round(ObjectFrame[4], 2);
-            _5.Content = Math.Round(ObjectFrame[5], 2);
-            _6.Content = Math.Round(ObjectFrame[6], 2);
-            _7.Content = Math.Round(ObjectFrame[7], 2);
-            _8.Content = Math.Round(ObjectFrame[8], 2);
-            _9.Content = Math.Round(ObjectFrame[9], 2);
-            _10.Content = Math.Round(ObjectFrame[10], 2);
-            _11.Content = Math.Round(ObjectFrame[11], 2);
-            _12.Content = Math.Round(ObjectFrame[12], 2);
-            _13.Content = Math.Round(ObjectFrame[13], 2);
-            _14.Content = Math.Round(ObjectFrame[14], 2);
-            _15.Content = Math.Round(ObjectFrame[15], 2);
+            if (ObjectFrame[3] != 0 && ObjectFrame[11] != 0) {
+                _0.Content = Math.Round(ObjectFrame[0], 2);
+                _1.Content = Math.Round(ObjectFrame[1], 2);
+                _2.Content = Math.Round(ObjectFrame[2], 2);
+                _3.Content = Math.Round(ObjectFrame[3], 2);
+                _4.Content = Math.Round(ObjectFrame[4], 2);
+                _5.Content = Math.Round(ObjectFrame[5], 2);
+                _6.Content = Math.Round(ObjectFrame[6], 2);
+                _7.Content = Math.Round(ObjectFrame[7], 2);
+                _8.Content = Math.Round(ObjectFrame[8], 2);
+                _9.Content = Math.Round(ObjectFrame[9], 2);
+                _10.Content = Math.Round(ObjectFrame[10], 2);
+                _11.Content = Math.Round(ObjectFrame[11], 2);
+                _12.Content = Math.Round(ObjectFrame[12], 2);
+                _13.Content = Math.Round(ObjectFrame[13], 2);
+                _14.Content = Math.Round(ObjectFrame[14], 2);
+                _15.Content = Math.Round(ObjectFrame[15], 2);
 
-            anglex = Math.Atan(ObjectFrame[8] / ObjectFrame[0]);
-            angle1 = Math.Atan(ObjectFrame[11] / ObjectFrame[3])*(180/Math.PI); // 
-            angle2 = Math.Atan(ObjectFrame[7] / ObjectFrame[11]) * (180 / Math.PI);
-            
-            angle.Content = anglex*(180/Math.PI);
+                anglex = Math.Atan(ObjectFrame[8] / ObjectFrame[0]);
+
+                angle.Content = String.Format("{0} Degrees", Math.Round(anglex * (180 / Math.PI)));
+            }
+            else { 
+                angle.Content = "Pallet Not Found";
+                _0.Content = 0;
+                _1.Content = 0;
+                _2.Content = 0;
+                _3.Content = 0;
+                _4.Content = 0;
+                _5.Content = 0;
+                _6.Content = 0;
+                _7.Content = 0;
+                _8.Content = 0;
+                _9.Content = 0;
+                _10.Content = 0;
+                _11.Content = 0;
+                _12.Content = 0;
+                _13.Content = 0;
+                _14.Content = 0;
+                _15.Content = 0;
+            }
         }
 
         //Handles closing of the window
