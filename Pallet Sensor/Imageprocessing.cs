@@ -156,50 +156,63 @@ public class Imageprocessing
     }
 
     //Create output screen
-    public static void OutputScreen(BitmapSource Image, System.Windows.Controls.Image outputimage, double angle, double x, double y)
+    public static void OutputScreen(System.Windows.Controls.Image outputimage, double[] frame)
     {
-        if (Image != null)
-        {
-            int x1, x2, x3, y1, y2, y3, w=150, i=0;
-            Image<Hsv, byte> blank = new Image<Hsv, byte>(processedred.Width, processedred.Height);
+            Image<Hsv, byte> blank = new Image<Hsv, byte>(processedred.Width, processedred.Height, new Hsv(100, 100, 100)); //Creates new blank image
+            double angle = Math.Atan(frame[8] / frame[0]);                                         //Compute the horizontal angle betwwen pallet and Kinect
+            string distance = "DISTANCE =";
+            int xscaled, x2, x3, zscaled, y2, y3, yscaled, w=150, i=0;
 
-            //Drawing dashed line
-            i = 0;
-            while (i < 480){
-                CvInvoke.Line(blank, new System.Drawing.Point(320, i), new System.Drawing.Point(320, i+20), new MCvScalar(0, 0, 100), 5, Emgu.CV.CvEnum.LineType.Filled);
-                i += 40;
-            }
+            //Scaling pallet centre to fit the screen
+            xscaled = Convert.ToInt32(320 - (frame[3] / 4096 * 640));
+            yscaled = Convert.ToInt32((frame[7] / 4096 * 150));
+            zscaled = Convert.ToInt32(480 - (frame[11] / 4096 * 480));
 
             //Drawing the arrow
             CvInvoke.Line(blank, new System.Drawing.Point(320, 480), new System.Drawing.Point(320, 430), new MCvScalar(0, 0, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
             CvInvoke.Line(blank, new System.Drawing.Point(320, 430), new System.Drawing.Point(300, 450), new MCvScalar(0, 0, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
             CvInvoke.Line(blank, new System.Drawing.Point(320, 430), new System.Drawing.Point(340, 450), new MCvScalar(0, 0, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
 
-            //Scaling pallet centre to fit the screen
-            x1 = Convert.ToInt32(320 - (x/4000*640));
-            y1 = Convert.ToInt32(480- (y/4000*480));
+            //Drawing dashed centre line
+            i = 0;
+            while (i < 480){
+                CvInvoke.Line(blank, new System.Drawing.Point(320, i), new System.Drawing.Point(320, i+20), new MCvScalar(0, 0, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
+                i += 40;
+            }
 
-            if (x != 0 && y != 0)
+            //Drawing vertical compass
+            CvInvoke.Rectangle(blank, new Rectangle(90, 15, 30, 300), new MCvScalar(0, 0, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
+            CvInvoke.Line(blank, new System.Drawing.Point(15, 240), new System.Drawing.Point(45, 240), new MCvScalar(0, 0, 255), 3, Emgu.CV.CvEnum.LineType.Filled);
+            CvInvoke.PutText(blank, "Height", new System.Drawing.Point(15, 60), Emgu.CV.CvEnum.FontFace.HersheyPlain, 1.5, new MCvScalar(0, 255, 255), 2, Emgu.CV.CvEnum.LineType.Filled);
+
+        if (frame[3] != 0 && frame[11] != 0)
             {
                 //Drawing circle on centre of pallet
-                CvInvoke.Circle(blank, new System.Drawing.Point(x1, y1), 5, new MCvScalar(170, 110, 70), 2, Emgu.CV.CvEnum.LineType.Filled);
+                CvInvoke.Circle(blank, new System.Drawing.Point(xscaled, zscaled), 5, new MCvScalar(180, 255, 255), 2, Emgu.CV.CvEnum.LineType.Filled);
 
                 //Computing end line coordinates
-                x2 = Convert.ToInt32(x1 - (w / 2) * Math.Cos(angle));
-                y2 = Convert.ToInt32(y1 - (w / 2) * Math.Sin(angle));
-                x3 = Convert.ToInt32(x1 + (w / 2) * Math.Cos(angle));
-                y3 = Convert.ToInt32(y1 + (w / 2) * Math.Sin(angle));
+                x2 = Convert.ToInt32(xscaled - (w / 2) * Math.Cos(angle));
+                y2 = Convert.ToInt32(zscaled - (w / 2) * Math.Sin(angle));
+                x3 = Convert.ToInt32(xscaled + (w / 2) * Math.Cos(angle));
+                y3 = Convert.ToInt32(zscaled + (w / 2) * Math.Sin(angle));
 
                 //Drawing line for the pallet
                 CvInvoke.Line(blank, new System.Drawing.Point(x2, y2), new System.Drawing.Point(x3, y3), new MCvScalar(180, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
+
+                //Drawing of line on vertical compass
+                CvInvoke.Line(blank, new System.Drawing.Point(15, 240 - yscaled), new System.Drawing.Point(45, 240 - yscaled), new MCvScalar(180, 255, 255), 4, Emgu.CV.CvEnum.LineType.Filled);
+                distance = ($"Distance = {frame[11]/1000}m");
+                CvInvoke.PutText(blank, distance, new System.Drawing.Point(10, 450), Emgu.CV.CvEnum.FontFace.HersheyPlain, 1.5, new MCvScalar(0, 255, 255), 2, Emgu.CV.CvEnum.LineType.Filled);
             }
             else
             {
-
+                //Drawing of line on vertical compass
+                CvInvoke.Line(blank, new System.Drawing.Point(15, 240 - yscaled), new System.Drawing.Point(45, 240 - yscaled), new MCvScalar(180, 255, 255), 4, Emgu.CV.CvEnum.LineType.Filled);
+                distance = ($"Distance = {frame[11] / 1000}m");
+                CvInvoke.PutText(blank, "No Pallet Found", new System.Drawing.Point(10, 450), Emgu.CV.CvEnum.FontFace.HersheyPlain, 1.5, new MCvScalar(0, 255, 255), 2, Emgu.CV.CvEnum.LineType.Filled);
             }
 
-            //Displaying the output image
+            //Displaying the output image to user interface
             outputimage.Source = BitmapSourceConvert.ToBitmapSource1(blank);
-        }
     }
 }

@@ -135,8 +135,9 @@ namespace Pallet_Sensor
                 YB = Imageprocessing.YBlue;
                 XR = Imageprocessing.XRed;
                 YR = Imageprocessing.YRed;
+
                 //Sets output screen
-                Imageprocessing.OutputScreen(bmap, Outputstream, anglex, ObjectFrame[3], ObjectFrame[11]);
+                Imageprocessing.OutputScreen(Outputstream, ObjectFrame);
                 i = 0;
             }
             else
@@ -179,7 +180,7 @@ namespace Pallet_Sensor
                 //Convert depth data to bitmapsource
                 short[] pixelData = new short[depthFrame.PixelDataLength];
                 depthFrame.CopyPixelDataTo(pixelData);
-                
+
                 BitmapSource bmap = BitmapSource.Create(
                     depthFrame.Width,
                     depthFrame.Height,
@@ -188,9 +189,7 @@ namespace Pallet_Sensor
                     pixelData,
                     depthFrame.Width * depthFrame.BytesPerPixel);
 
-                //
-
-                double vertF = 609.275495, horzF = 589.3666835; //Focal lengths
+                double vertF = 571.401, horzF = 557.274; //Focal lengths
 
                 ColorImagePoint[] color = new ColorImagePoint[depthFrame.PixelDataLength];
                 ksensor.CoordinateMapper.MapDepthFrameToColorFrame(DepthImageFormat.Resolution640x480Fps30, this.depthPixels, ColorImageFormat.RgbResolution640x480Fps30, color);
@@ -211,6 +210,7 @@ namespace Pallet_Sensor
                         {
                             XRMapped = h % 640;
                         }
+
                         YRMapped = (h - XR) / 640;
 
                         //Red coordinates
@@ -303,15 +303,9 @@ namespace Pallet_Sensor
             BluePoint[1] = Bycoord;
             BluePoint[2] = ZB;
 
-            Double Px = BluePoint[0] + ((RedPoint[0] - BluePoint[0]) / 2);
-            Double Py = BluePoint[1] + ((RedPoint[1] - BluePoint[1]) / 2);
-            Double Pz = BluePoint[2] + ((RedPoint[2] - BluePoint[2]) / 2);
-
-            ObjectFrame[3] = Px;
-            ObjectFrame[7] = Py;
-            ObjectFrame[11] = Pz;
-
-            angle3 = Math.Atan((RedPoint[1] - BluePoint[1]) / (RedPoint[0] - BluePoint[0]));
+            ObjectFrame[3] = BluePoint[0] + ((RedPoint[0] - BluePoint[0]) / 2);
+            ObjectFrame[7] = BluePoint[1] + ((RedPoint[1] - BluePoint[1]) / 2);
+            ObjectFrame[11] = BluePoint[2] + ((RedPoint[2] - BluePoint[2]) / 2);
 
             m = 0;
             foreach (double element in RedPoint)
@@ -319,11 +313,11 @@ namespace Pallet_Sensor
                 RedPoint[m] = BluePoint[m] - RedPoint[m];
                 m++;
             }
-            m = 0;
 
+            m = 0;
             RedPoint[1] = 0;
-            double mag = Math.Sqrt(RedPoint[0]*RedPoint[0] + RedPoint[1]*RedPoint[1] + RedPoint[2]*RedPoint[2]);
-            
+            double mag = Math.Sqrt(RedPoint[0] * RedPoint[0] + RedPoint[1] * RedPoint[1] + RedPoint[2] * RedPoint[2]);
+
             foreach (double element in RedPoint)
             {
                 RedPoint[m] = RedPoint[m] / mag;
@@ -335,14 +329,15 @@ namespace Pallet_Sensor
             ObjectFrame[4] = RedPoint[1];
             ObjectFrame[8] = RedPoint[2];
 
-            BluePoint[0] = RedPoint[1] * 0 - RedPoint[2] * 1;
-            BluePoint[1] = RedPoint[2] * 0 - RedPoint[0] * 0;
-            BluePoint[2] = RedPoint[0] * 1 - RedPoint[1] * 0;
+            BluePoint[0] = RedPoint[2] * -1;
+            BluePoint[1] = 0;
+            BluePoint[2] = RedPoint[0] * 1;
 
             ObjectFrame[2] = BluePoint[0];
             ObjectFrame[6] = BluePoint[1];
             ObjectFrame[10] = BluePoint[2];
 
+            // Displays the coordinates frame to the debug interface
             if (ObjectFrame[3] != 0 && ObjectFrame[11] != 0) {
                 _0.Content = Math.Round(ObjectFrame[0], 2);
                 _1.Content = Math.Round(ObjectFrame[1], 2);
@@ -362,9 +357,10 @@ namespace Pallet_Sensor
                 _15.Content = Math.Round(ObjectFrame[15], 2);
 
                 anglex = Math.Atan(ObjectFrame[8] / ObjectFrame[0]);
-
                 angle.Content = String.Format("{0} Degrees", Math.Round(anglex * (180 / Math.PI)));
             }
+
+            // Runs when no pallet is found in the scene
             else { 
                 angle.Content = "Pallet Not Found";
                 _0.Content = 0;
