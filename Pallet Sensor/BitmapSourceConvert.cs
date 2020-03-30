@@ -28,7 +28,6 @@ public static class BitmapSourceConvert
             return bs;
         }
     }
-
     public static BitmapSource ToBitmapSource1(Emgu.CV.Image<Hsv, byte> image)
     {
         using (System.Drawing.Bitmap source = image.Bitmap)

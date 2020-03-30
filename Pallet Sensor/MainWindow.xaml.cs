@@ -1,13 +1,10 @@
 ﻿using Microsoft.Kinect;
+using System;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Emgu.CV;
-using Emgu.CV.Structure;
-using System;
-using System.Diagnostics;
-using System.Windows.Controls;
 
 // Author: Andrew Ross
 // Student ID: 16511676
@@ -21,12 +18,12 @@ namespace Pallet_Sensor
         private WriteableBitmap colorBmap;              //Declares place to store color bitmap
         private DepthImagePixel[] depthPixels;          //Declares place to store depth data
         private byte[] colorPixels;                     //Declares place to store color data
-        private static int XB, YB, XR=0, YR=0, XRMapped, YRMapped, XBMapped, YBMapped, ZR, ZB;
-        public static double[] ObjectFrame = {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
+        private static int XB, YB, XR = 0, YR = 0, XRMapped, YRMapped, XBMapped, YBMapped, ZR, ZB;
+        public static double[] ObjectFrame = { 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
         private double Rxcoord, Rycoord, Bxcoord, Bycoord; //stores coordinate info
         private double[] RedPoint = new double[3], BluePoint = new double[3];
         private int i = 1, j = 0, k = 0, m = 0;
-        public static double anglex = 0, angle1=0, angle2 = 0, angle3 = 0;
+        public static double anglex = 0, angle1 = 0, angle2 = 0, angle3 = 0;
 
         private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
@@ -105,7 +102,7 @@ namespace Pallet_Sensor
                     }
                 }
 
-                if (null == this.ksensor){}
+                if (null == this.ksensor) { }
             }
 
             //Handling stopping of service
@@ -116,13 +113,13 @@ namespace Pallet_Sensor
                     this.ksensor.Stop();
                     this.Stream.Content = ("Start");
                 }
-                else{}
+                else { }
             }
         }
 
         //Gets color frame from kinect
         private void Ksensor_ColorFrameReady(object sender, ColorImageFrameReadyEventArgs e)
-        {            
+        {
             ColorImageFrame colorFrame = e.OpenColorImageFrame();
             BitmapSource bmap = ImageToBitmap(colorFrame);
             Colorstream.Source = bmap;
@@ -157,7 +154,8 @@ namespace Pallet_Sensor
                 Image.Dispose();
                 return bmap;
             }
-            else {
+            else
+            {
                 return null;
             }
         }
@@ -166,7 +164,7 @@ namespace Pallet_Sensor
         private void Ksensor_DepthFrameReady(object sender, DepthImageFrameReadyEventArgs e)
         {
             DepthImageFrame depthFrame = e.OpenDepthImageFrame();   //Puts Depthframe into Depthframe
-            
+
             //Checks if there is a depthFrame
             if (depthFrame != null)
             {
@@ -275,17 +273,17 @@ namespace Pallet_Sensor
                 Canvas1.Children.Add(DepthPointRed);
                 Canvas1.Children.Add(DepthPointBlue);
 
-                DepthPointRed.SetValue(Canvas.LeftProperty, (depthFrame.Width - XRMapped -3)*.6);
-                DepthPointRed.SetValue(Canvas.TopProperty, (YRMapped-3) *.6);
+                DepthPointRed.SetValue(Canvas.LeftProperty, (depthFrame.Width - XRMapped - 3) * .6);
+                DepthPointRed.SetValue(Canvas.TopProperty, (YRMapped - 3) * .6);
 
-                DepthPointBlue.SetValue(Canvas.LeftProperty, (depthFrame.Width - XBMapped-3) * .6);
-                DepthPointBlue.SetValue(Canvas.TopProperty, (YBMapped-3) * .6);
+                DepthPointBlue.SetValue(Canvas.LeftProperty, (depthFrame.Width - XBMapped - 3) * .6);
+                DepthPointBlue.SetValue(Canvas.TopProperty, (YBMapped - 3) * .6);
 
-                ColorPointRed.SetValue(Canvas.LeftProperty, (depthFrame.Width - XR-3) * .6);
-                ColorPointRed.SetValue(Canvas.TopProperty, (YR-3) * .6);
+                ColorPointRed.SetValue(Canvas.LeftProperty, (depthFrame.Width - XR - 3) * .6);
+                ColorPointRed.SetValue(Canvas.TopProperty, (YR - 3) * .6);
 
-                ColorPointBlue.SetValue(Canvas.LeftProperty, (depthFrame.Width - XB-3) * .6);
-                ColorPointBlue.SetValue(Canvas.TopProperty, (YB-3) * .6);
+                ColorPointBlue.SetValue(Canvas.LeftProperty, (depthFrame.Width - XB - 3) * .6);
+                ColorPointBlue.SetValue(Canvas.TopProperty, (YB - 3) * .6);
 
                 //Cleanup
                 depthFrame.Dispose();
@@ -338,7 +336,8 @@ namespace Pallet_Sensor
             ObjectFrame[10] = BluePoint[2];
 
             // Displays the coordinates frame to the debug interface
-            if (ObjectFrame[3] != 0 && ObjectFrame[11] != 0) {
+            if (ObjectFrame[3] != 0 && ObjectFrame[11] != 0)
+            {
                 _0.Content = Math.Round(ObjectFrame[0], 2);
                 _1.Content = Math.Round(ObjectFrame[1], 2);
                 _2.Content = Math.Round(ObjectFrame[2], 2);
@@ -361,7 +360,8 @@ namespace Pallet_Sensor
             }
 
             // Runs when no pallet is found in the scene
-            else { 
+            else
+            {
                 angle.Content = "Pallet Not Found";
                 _0.Content = 0;
                 _1.Content = 0;
@@ -389,7 +389,7 @@ namespace Pallet_Sensor
             {
                 this.ksensor.Stop();                //Stops the kinect sensor
             }
-            else{}
+            else { }
         }
     }
 }
