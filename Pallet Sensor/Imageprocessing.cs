@@ -33,7 +33,7 @@ public class Imageprocessing
             //Main processing
             CvInvoke.Flip(processedred, processedred, Emgu.CV.CvEnum.FlipType.Horizontal);    //Flips the image in the horizontal
             Image<Gray, Byte> Thrred;                                                     //Creates two Grayscale images that will be used when segmenting
-            Thrred = processedred.InRange(new Hsv(172, 125, 120), new Hsv(180, 255, 255));    //Handles second range for RED
+            Thrred = processedred.InRange(new Hsv(165, 125, 120), new Hsv(180, 255, 255));    //Handles second range for RED
 
             //Handles noise and cleans image
             Mat kernel = Mat.Ones(3, 3, Emgu.CV.CvEnum.DepthType.Cv32F, 1);             //Creates 3x3 kernelred for use as kernelred
@@ -163,10 +163,10 @@ public class Imageprocessing
             string distance = "DISTANCE =";
             int xscaled, x2, x3, zscaled, y2, y3, yscaled, w=150, i=0;
 
-            //Scaling pallet centre to fit the screen
-            xscaled = Convert.ToInt32(320 - (frame[3] / 4096 * 640));
-            yscaled = Convert.ToInt32((frame[7] / 4096 * 150));
-            zscaled = Convert.ToInt32(480 - (frame[11] / 4096 * 480));
+            //Scaling pallet centre to fit the screenoi nij9h
+            xscaled = Convert.ToInt32(320 - (frame[3] / 6000 * 640));
+            yscaled = Convert.ToInt32(((frame[7]+400) / 4096 * 150));
+            zscaled = Convert.ToInt32(480 - (frame[11] / 6000 * 480));
 
             //Drawing the arrow
             CvInvoke.Line(blank, new System.Drawing.Point(320, 480), new System.Drawing.Point(320, 430), new MCvScalar(0, 0, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
@@ -180,10 +180,18 @@ public class Imageprocessing
                 i += 40;
             }
 
-            //Drawing vertical compass
-            CvInvoke.Rectangle(blank, new Rectangle(90, 15, 30, 300), new MCvScalar(0, 0, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
-            CvInvoke.Line(blank, new System.Drawing.Point(15, 240), new System.Drawing.Point(45, 240), new MCvScalar(0, 0, 255), 3, Emgu.CV.CvEnum.LineType.Filled);
-            CvInvoke.PutText(blank, "Height", new System.Drawing.Point(15, 60), Emgu.CV.CvEnum.FontFace.HersheyPlain, 1.5, new MCvScalar(0, 255, 255), 2, Emgu.CV.CvEnum.LineType.Filled);
+            i = 0;
+            while (i < 200)
+            {
+            CvInvoke.Line(blank, new System.Drawing.Point(245, 480-i), new System.Drawing.Point(245, 480-i + 10), new MCvScalar(0, 0, 255), 3, Emgu.CV.CvEnum.LineType.Filled);
+            CvInvoke.Line(blank, new System.Drawing.Point(395, 480-i), new System.Drawing.Point(395, 480-i + 10), new MCvScalar(0, 0, 255), 3, Emgu.CV.CvEnum.LineType.Filled);
+            i += 20;
+            }
+
+        //Drawing vertical compass
+        CvInvoke.Rectangle(blank, new Rectangle(90,15, 30, 300), new MCvScalar(0, 0, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
+        CvInvoke.Line(blank, new System.Drawing.Point(15, 240), new System.Drawing.Point(45, 240), new MCvScalar(0, 0, 255), 3, Emgu.CV.CvEnum.LineType.Filled);
+        CvInvoke.PutText(blank, "Height", new System.Drawing.Point(15, 60), Emgu.CV.CvEnum.FontFace.HersheyPlain, 1.5, new MCvScalar(0, 255, 255), 2, Emgu.CV.CvEnum.LineType.Filled);
 
         if (frame[3] != 0 && frame[11] != 0)
             {
@@ -200,16 +208,16 @@ public class Imageprocessing
                 CvInvoke.Line(blank, new System.Drawing.Point(x2, y2), new System.Drawing.Point(x3, y3), new MCvScalar(180, 255, 255), 5, Emgu.CV.CvEnum.LineType.Filled);
 
                 //Drawing of line on vertical compass
-                CvInvoke.Line(blank, new System.Drawing.Point(15, 240 - yscaled), new System.Drawing.Point(45, 240 - yscaled), new MCvScalar(180, 255, 255), 4, Emgu.CV.CvEnum.LineType.Filled);
-                distance = ($"Distance = {frame[11]/1000}m");
-                CvInvoke.PutText(blank, distance, new System.Drawing.Point(10, 450), Emgu.CV.CvEnum.FontFace.HersheyPlain, 1.5, new MCvScalar(0, 255, 255), 2, Emgu.CV.CvEnum.LineType.Filled);
+                CvInvoke.Line(blank, new System.Drawing.Point(15, 240 + yscaled), new System.Drawing.Point(45, 240 + yscaled), new MCvScalar(180, 255, 255), 4, Emgu.CV.CvEnum.LineType.Filled);
+                distance = ($"Distance = {(frame[11]-1200)/1000}m");
+                CvInvoke.PutText(blank, distance, new System.Drawing.Point(350, 30), Emgu.CV.CvEnum.FontFace.HersheyPlain, 1.5, new MCvScalar(0, 255, 255), 2, Emgu.CV.CvEnum.LineType.Filled);
             }
             else
             {
                 //Drawing of line on vertical compass
                 CvInvoke.Line(blank, new System.Drawing.Point(15, 240 - yscaled), new System.Drawing.Point(45, 240 - yscaled), new MCvScalar(180, 255, 255), 4, Emgu.CV.CvEnum.LineType.Filled);
-                distance = ($"Distance = {frame[11] / 1000}m");
-                CvInvoke.PutText(blank, "No Pallet Found", new System.Drawing.Point(10, 450), Emgu.CV.CvEnum.FontFace.HersheyPlain, 1.5, new MCvScalar(0, 255, 255), 2, Emgu.CV.CvEnum.LineType.Filled);
+                distance = ($"Distance = {(frame[11] -1200) / 1000}m");
+                CvInvoke.PutText(blank, "No Pallet Found", new System.Drawing.Point(350, 30), Emgu.CV.CvEnum.FontFace.HersheyPlain, 1.5, new MCvScalar(0, 255, 255), 2, Emgu.CV.CvEnum.LineType.Filled);
             }
 
             //Displaying the output image to user interface

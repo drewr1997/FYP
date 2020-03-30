@@ -69,7 +69,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="BLUE.cs" />
     <Compile Include="CreateEllipse.cs" />
     <Compile Include="Imageprocessing.cs" />
     <Compile Include="Tilt.cs" />
@@ -116,9 +115,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="License-LGPL.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Compass.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\EMGU.CV.4.1.1.3497\build\EMGU.CV.targets" Condition="Exists('..\packages\EMGU.CV.4.1.1.3497\build\EMGU.CV.targets')" />
